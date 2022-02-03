@@ -2,24 +2,23 @@ const express = require('express')
 const router = express.Router()
 const axios = require('axios')
 
-const { getUser, ensureAuthenticated } = require('../../helpers/auth-helpers')
+const { getUser } = require('../../helpers/auth-helpers')
 
 router.get('/', (req, res) => {
   res.render('comments')
 })
 
 router.get('/post', async (req, res) => {
+  const { accessToken } = getUser(req)
   const igSelected = req.query?.igSelected || ''
   const before = req.query?.before || ''
   const after = req.query?.after || ''
   const mediaQuery = 'media' + (after ? `.after(${after})` : '') + (before ? `.before(${before})` : '') + '.limit(4)'
 
-  const accessToken =
-    'EAAoZBxsAk98cBADPteRFY6y311iYu5758dFpZANsJB4FW1mwz0erHS3NZCZB4j6S5UY21HsKxy1kbRXLusyv0ojoOcSrKKVx8OWTsmMPq471ZBUD0zCxY3kDWRsYvOlN1yeN510nDnBFaZAM18mNV5CDQtqPNZC60iADKtkkYsr2u8tKXA0jZCmo1HA2RwEMTww68FJs73VCx9FpZANPCprrw'
-
   try {
     // 取出 instagram_business_account id
-    const nameResponse = await axios.get(`https://graph.facebook.com/v12.0/me/accounts?fields=instagram_business_account{name}&access_token=${accessToken}`)
+    const nameResponse = await axios.get(`
+      https://graph.facebook.com/v12.0/me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`)
     const ig = nameResponse?.data?.data
 
     // 取出 指定 ig id 的 media
@@ -36,5 +35,24 @@ router.get('/post', async (req, res) => {
     console.log(e.message)
   }
 })
+
+// router.get('/post', (req, res) => {
+//   const { accessToken } = req.user
+//   const before = req.query?.before || ''
+//   const after = req.query?.after || ''
+//   const mediaQuery = 'media' + (after ? `.after(${after})` : '') + (before ? `.before(${before})` : '') + '.limit(4)'
+
+//   // 取得 all media instagramId
+//   url = `https://graph.facebook.com/v12.0/me/accounts/?fields=instagram_business_account&access_token=${accessToken}`
+//   axios.get(url).then(response => {
+//     console.log(response)
+//     const ig = response?.data?.data[0]?.instagram_business_account?.media
+//     console.log(ig)
+//     const media = ig?.data
+//     const paging = ig?.paging?.cursors
+//     if (ig === undefined) return res.redirect('back')
+//     res.render('total-media', { media, paging })
+//   })
+// })
 
 module.exports = router

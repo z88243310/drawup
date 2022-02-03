@@ -36,7 +36,6 @@ usePassport(app)
 app.use((req, res, next) => {
   res.locals.user = getUser(req)
   res.locals.isAuthenticated = ensureAuthenticated(req)
-  console.log(res.locals.user, res.locals.isAuthenticated)
   next()
 })
 

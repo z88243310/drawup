@@ -1,0 +1,50 @@
+<link rel="stylesheet" href="stylesheets/total-media.css">
+<h1>選擇貼文</h1>
+<div class="row mx-auto" style="max-width: 750px;">
+  <form class="ig-form" onchange="this.submit()" method="get">
+    <select name="igSelected" id="ig-select">
+      <option value="">請選擇IG帳號</option>
+      {{#each ig}}
+        <option value="{{this.instagram_business_account.id}}" {{#ifCond
+          this.instagram_business_account.id ../igSelected}}selected{{/ifCond}}>
+          {{this.instagram_business_account.name}}
+        </option>
+      {{/each}}
+    </select>
+  </form>
+  {{#each media}}
+    <div class="col-12 mt-3">
+      <div class="card shadow-sm" style="height:100px">
+        <a href="{{this.id}}" class="btn-img">
+          <div class="img-container" {{#ifCond this.media_type 'VIDEO' }}
+            style="background-image:url({{../this.thumbnail_url}})" {{/ifCond}} {{#ifCond
+            this.media_type 'IMAGE' }} style="background-image:url({{../this.media_url}})"
+            {{/ifCond}} {{#ifCond this.media_type 'CAROUSEL_ALBUM' }}
+            style="background-image:url({{../this.media_url}})" {{/ifCond}}>
+          </div>
+          <div class="card-body">
+            <div class="mb-1 card-title">
+              <h5 class="title">{{adjustDate this.timestamp}}</h5>
+              <div class=" icon-bar">
+                <div class="icon">
+                  <i class="fas fa-heart"></i><span> {{this.like_count}}</span>
+                </div>
+                <div class="icon">
+                  <i class="fas fa-comment"></i><span> {{this.comments_count}}</span>
+                </div>
+              </div>
+            </div>
+            <p class="card-text text-truncate mt-4">{{this.caption}}</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  {{/each}}
+</div>
+{{#if cursor}}
+  <div class="mx-auto text-center mt-4 mb-4">
+    <a class="btn btn-info mr-4"
+      href="/post?before={{cursor.before}}&igSelected={{igSelected}}">上一頁</a>
+    <a class="btn btn-info" href="/post?after={{cursor.after}}&igSelected={{igSelected}}">下一頁</a>
+  </div>
+{{/if}}

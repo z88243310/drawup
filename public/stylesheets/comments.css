@@ -1,5 +1,3 @@
-.show-form {
-}
 .img {
   width: 80px;
   height: 80px;
@@ -13,7 +11,7 @@
 .btn-danger {
   width: 60%;
   display: block;
-  /* max-width: 250px; */
+  max-width: 350px;
 }
 
 .count {

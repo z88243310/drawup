@@ -5,7 +5,7 @@
     {{else}}style="background-image:url(/img/question.png)" {{/if}}>
   </div>
 </div>
-<form>
+<form class="" action="/auth/facebook" method="get">
   <fieldset disabled>
     <legend>設定抽籤條件</legend>
     <div class="mb-3">
@@ -27,7 +27,11 @@
       </div>
     </div>
   </fieldset>
-  <button type="submit" class="btn btn-danger mb-4 mx-auto">請先授權 facebook</button>
+  {{#if isAuthenticated}}
+    <button type="submit" class="btn btn-info mb-4 mx-auto">準備抽獎</button>
+  {{else}}
+    <button type="submit" class="btn btn-danger mb-4 mx-auto">請先授權 facebook</button>
+  {{/if}}
 </form>
 <h5 class="count">共有 {{#if comments}}{{comments.length}}
   {{else}}0{{/if}} 則留言

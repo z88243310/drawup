@@ -5,8 +5,8 @@
     <select name="igSelected" id="ig-select">
       <option value="">請選擇IG帳號</option>
       {{#each ig}}
-        <option value="{{this.instagram_business_account.id}}" {{#ifCond
-          this.instagram_business_account.id ../igSelected}}selected{{/ifCond}}>
+        <option value="{{this.instagram_business_account.id}}" {{#AESCompare
+          this.instagram_business_account.id ../igSelected}}selected{{/AESCompare}}>
           {{this.instagram_business_account.name}}
         </option>
       {{/each}}
@@ -14,8 +14,10 @@
   </form>
   {{#each media}}
     <div class="col-12 mt-3">
-      <div class="card shadow-sm" style="height:100px">
-        <a href="{{this.id}}" class="btn-img">
+      <form action="/" method="post" class="card shadow-sm" style="height:100px">
+        <!-- input -->
+        <input type="hidden" name="postId" value="{{this.id}}">
+        <button onclick="this.submit()" class="btn-img">
           <div class="img-container" {{#ifCond this.media_type 'VIDEO' }}
             style="background-image:url({{../this.thumbnail_url}})" {{/ifCond}} {{#ifCond
             this.media_type 'IMAGE' }} style="background-image:url({{../this.media_url}})"
@@ -36,8 +38,8 @@
             </div>
             <p class="card-text text-truncate mt-4">{{this.caption}}</p>
           </div>
-        </a>
-      </div>
+        </button>
+      </form>
     </div>
   {{/each}}
 </div>

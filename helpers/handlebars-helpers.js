@@ -1,3 +1,10 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+// use cryptr
+const Cryptr = require('cryptr')
+const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
+
 const dayjs = require('dayjs') // 載入 dayjs 套件
 module.exports = {
   // 取得當年年份作為 currentYear 的屬性值，並導出
@@ -11,14 +18,17 @@ module.exports = {
       return options.inverse()
     }
   },
-  // 比較 a > b
-  ifBigger: function (a, b, options) {
-    if (String(a) === String(b)) {
+  // AES compare
+  AESCompare: function (a, b, options) {
+    if (!a || !b) return
+    if (cryptr.decrypt(a) === cryptr.decrypt(b)) {
       return options.fn()
     } else {
       return options.inverse()
     }
   },
   // 取得當年年份作為 currentYear 的屬性值，並導出
-  adjustDate: date => dayjs(date).format('YYYY-MM-DD HH:mm')
+  adjustDate: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
+  // 位移 index +1
+  increment: value => parseInt(value) + 1
 }

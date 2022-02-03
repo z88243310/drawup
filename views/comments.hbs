@@ -1,8 +1,10 @@
 <link rel="stylesheet" href="stylesheets/comments.css">
 <!-- show comments -->
 <div class="show-form">
-  <div class="img mx-auto" {{#if image_url}} style="background-image:url({{image_url}})"
-    {{else}}style="background-image:url(/img/question.png)" {{/if}}>
+  <div class="img mx-auto mb-2" {{#if image_url}}
+    style="background-image:url({{image_url}});background-size: 100%;"
+    {{else}}style="background-image:url(/img/question.png);background-size: 60%,60%;background-repeat: no-repeat;"
+    {{/if}}>
   </div>
 </div>
 <form class="" action="/auth/facebook" method="get">
@@ -42,14 +44,18 @@
       <th scope="col">#</th>
       <th scope="col">名稱</th>
       <th scope="col">留言</th>
+      <th scope="col">標記</th>
+      <th scope="col">時間</th>
     </tr>
   </thead>
   <tbody>
     {{#each comments}}
       <tr>
         <th scope="row">{{increment @index}}</th>
-        <td>{{this.from.username}}</td>
+        <td>{{this.username}}</td>
         <td>{{this.text}}</td>
+        <td>{{this.text}}</td>
+        <td>{{adjustDate this.timestamp}}</td>
       </tr>
     {{/each}}
   </tbody>

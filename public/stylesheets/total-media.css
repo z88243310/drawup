@@ -7,9 +7,9 @@ h1 {
 #ig-select {
   height: 30px;
   max-width: 400px;
-
   background-color: rgba(241, 193, 103, 0.068);
   border: 1px solid rgba(199, 198, 198, 0.404);
+  color: black;
 }
 
 button {
@@ -35,6 +35,7 @@ button {
 
 .img-container {
   width: 80px;
+  height: 100%;
   background-size: cover;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;

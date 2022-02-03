@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/stylesheets/total-media.css">
 <h1>選擇貼文</h1>
-<div class="row mx-auto" style="max-width: 750px;">
+<div class="row mx-auto mt-2" style="max-width: 750px;">
   <form class="ig-form" onchange="this.submit()" method="get">
     <select name="igSelected" id="ig-select" class="shadow-sm">
       <option value="">請選擇IG帳號</option>
@@ -19,10 +19,10 @@
         <input type="hidden" name="postId" value="{{this.id}}">
         <button class="btn-img">
           <div class="img-container" {{#ifCond this.media_type 'VIDEO' }}
-            style="background-image:url({{../this.thumbnail_url}})" {{/ifCond}} {{#ifCond
-            this.media_type 'IMAGE' }} style="background-image:url({{../this.media_url}})"
+            style="background-image:url('{{../this.thumbnail_url}}')" {{/ifCond}} {{#ifCond
+            this.media_type 'IMAGE' }} style="background-image:url('{{../this.media_url}}')"
             {{/ifCond}} {{#ifCond this.media_type 'CAROUSEL_ALBUM' }}
-            style="background-image:url({{../this.media_url}})" {{/ifCond}}>
+            style="background-image:url('{{../this.media_url}}')" {{/ifCond}}>
           </div>
           <div class="card-body">
             <div class="mb-1 card-title">

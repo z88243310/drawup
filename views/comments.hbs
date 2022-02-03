@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="stylesheets/comments.css">
-<!-- show comments -->
+<!-- 貼文縮圖 -->
 <div class="show-form">
   <div class="img mx-auto mb-2" {{#if image_url}}
     style="background-image:url({{image_url}});background-size: 100%;"
@@ -7,39 +7,75 @@
     {{/if}}>
   </div>
 </div>
-<form class="" action="/auth/facebook" method="get">
-  <fieldset disabled>
-    <legend>設定抽籤條件</legend>
-    <div class="mb-3">
-      <label for="disabledTextInput" class="form-label">Disabled input</label>
-      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
-    </div>
-    <div class="mb-3">
-      <label for="disabledSelect" class="form-label">Disabled select menu</label>
-      <select id="disabledSelect" class="form-select">
-        <option>Disabled select</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="disabledFieldsetCheck">
-        <label class="form-check-label" for="disabledFieldsetCheck">
-          Can't check this
-        </label>
-      </div>
-    </div>
-  </fieldset>
-  {{#if isAuthenticated}}
-    <button type="submit" class="btn btn-info mb-4 mx-auto">準備抽獎</button>
+<!-- 有認證且有留言，即可抽籤 -->
+{{#if isAuthenticated}}
+  {{#if comments}}
+    <form action="/draw" method="get">
+      <fieldset>
   {{else}}
-    <button type="submit" class="btn btn-danger mb-4 mx-auto">請先授權 facebook</button>
+    <form class="" action="/post" method="get">
+      <fieldset disabled>
   {{/if}}
+{{else}}
+  <form class="" action="/auth/facebook" method="get">
+    <fieldset disabled>
+{{/if}}
+<!-- 設定條件 -->
+<legend>設定抽獎條件</legend>
+<div class="mb-3">
+  <label for="repeat" class="form-label">重複留言個數</label>
+  <input type="number" id="repeat" class="form-control" placeholder="1-20" name="repeat"
+    value="{{#if repeat}}{{repeat}}{{else}}1{{/if}}" min="1" max="20" required>
+</div>
+<div class="mb-3">
+  <label for="tag" class="form-label">標記人數</label>
+  <input type="number" id="tag" class="form-control" placeholder="1-10" name="tag"
+    value="{{#if tag}}{{tag}}{{else}}1{{/if}}" min="1" max="10" required>
+</div>
+<div class="mb-3">
+  <label for="deadline" class="form-label">截止時間</label>
+  <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="date"
+    value="{{date}}" required>
+</div>
+<!-- 設定獎項 -->
+<legend>設定獎項</legend>
+<table class=" table align-middle">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th class="col-7" scope="col">項目</th>
+      <th class="col-3" scope="col">得獎人數</th>
+    </tr>
+  </thead>
+  <tbody id="award">
+    <tr>
+      <th scope="row">1</th>
+      <td><input type="text" class="item-name" name="itemName-1"></td>
+      <td><input type="number" class="item-num" min="1" max="5" name="itemNum-1" value="1"></td>
+    </tr>
+  </tbody>
+</table>
+<button id="btn-add" class="btn btn-secondary d-inline-block">+</button>
+<button id="btn-delete" class="btn btn-secondary d-inline-block">–</button>
+</fieldset>
+<!-- 按鈕切換 -->
+{{#if isAuthenticated}}
+  {{#if comments}}
+    <button type="submit" class="btn-draw btn mt-4 mb-5 mx-auto"
+      onclick="return confirm(`進入抽獎頁面`)">準備抽獎</button>
+  {{else}}
+    <button type="submit" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
+  {{/if}}
+{{else}}
+  <button type="submit" class="btn-auth btn btn-danger mt-4 mb-5 mx-auto">請先授權 facebook</button>
+{{/if}}
 </form>
+<!-- 留言表 -->
 <h5 class="count">共有 {{#if comments}}{{comments.length}}
   {{else}}0{{/if}} 則留言
 </h5>
-<table class=" table align-middle table-hover" <thead class="thead-dark">
-  <thead>
+<table class=" table align-middle table-hover">
+  <thead class="thead-dark">
     <tr>
       <th scope="col">#</th>
       <th scope="col">名稱</th>
@@ -60,3 +96,4 @@
     {{/each}}
   </tbody>
 </table>
+<script src="/javascripts/comments.js"></script>

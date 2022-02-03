@@ -5,13 +5,45 @@
   border-radius: 30px;
 }
 
-.btn-info,
-.btn-danger {
+.btn-draw,
+.btn-post,
+.btn-auth {
   width: 60%;
   display: block;
   max-width: 350px;
 }
+.btn-draw,
+.btn-post {
+  background-color: #17a2b8;
+  border: 1px solid #17a2b8;
+  color: white;
+}
+.btn-draw:hover,
+.btn-post:hover {
+  background-color: #0d7281;
+  border: 1px solid #0d7281;
+  color: white;
+}
 
 .count {
   width: 60%;
+}
+
+.item-name,
+.item-num {
+  width: 100%;
+}
+
+#btn-add,
+#btn-delete {
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  font-weight: 900;
+}
+
+legend {
+  font-weight: 600;
 }

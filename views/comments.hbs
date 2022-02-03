@@ -1,1 +1,52 @@
-<h1>This is home page</h1>
+<link rel="stylesheet" href="stylesheets/comments.css">
+<!-- show comments -->
+<div class="show-form">
+  <div class="img mx-auto" {{#if image_url}} style="background-image:url({{image_url}})"
+    {{else}}style="background-image:url(/img/question.png)" {{/if}}>
+  </div>
+</div>
+<form>
+  <fieldset disabled>
+    <legend>設定抽籤條件</legend>
+    <div class="mb-3">
+      <label for="disabledTextInput" class="form-label">Disabled input</label>
+      <input type="text" id="disabledTextInput" class="form-control" placeholder="Disabled input">
+    </div>
+    <div class="mb-3">
+      <label for="disabledSelect" class="form-label">Disabled select menu</label>
+      <select id="disabledSelect" class="form-select">
+        <option>Disabled select</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="disabledFieldsetCheck">
+        <label class="form-check-label" for="disabledFieldsetCheck">
+          Can't check this
+        </label>
+      </div>
+    </div>
+  </fieldset>
+  <button type="submit" class="btn btn-danger mb-4 mx-auto">請先授權 facebook</button>
+</form>
+<h5 class="count">共有 {{#if comments}}{{comments.length}}
+  {{else}}0{{/if}} 則留言
+</h5>
+<table class=" table align-middle table-hover" <thead class="thead-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">名稱</th>
+      <th scope="col">留言</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each comments}}
+      <tr>
+        <th scope="row">{{increment @index}}</th>
+        <td>{{this.from.username}}</td>
+        <td>{{this.text}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

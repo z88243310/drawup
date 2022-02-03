@@ -1,0 +1,21 @@
+.show-form {
+}
+.img {
+  width: 80px;
+  height: 80px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 55%, 55%;
+  border-radius: 30px;
+}
+
+.btn-info,
+.btn-danger {
+  width: 60%;
+  display: block;
+  /* max-width: 250px; */
+}
+
+.count {
+  width: 60%;
+}

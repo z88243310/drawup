@@ -24,11 +24,14 @@ module.exports = app => {
         User.findOne({ where: { email } }).then(user => {
           // 已註冊
           if (user) {
-            return user.update({ accessToken }).then(user => done(null, user))
+            return user
+              .update({ accessToken })
+              .then(user => done(null, user, req.flash('success_messages', '授權成功')))
+              .catch(error => done(error, false))
           }
           // 未註冊
           return User.create({ name, email, accessToken })
-            .then(user => done(null, user))
+            .then(user => done(null, user, req.flash('success_messages', '授權成功')))
             .catch(error => done(error, false))
         })
       }

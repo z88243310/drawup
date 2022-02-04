@@ -16,7 +16,7 @@
     <div class="col-12 mt-3">
       <form action="/" method="post" class="card shadow-sm" style="height:100px">
         <!-- input -->
-        <input type="hidden" name="postId" value="{{this.id}}">
+        <input type="hidden" name="mediaJson" value="{{toJson this}}">
         <button class="btn-img">
           <div class="img-container" {{#ifCond this.media_type 'VIDEO' }}
             style="background-image:url('{{../this.thumbnail_url}}')" {{/ifCond}} {{#ifCond

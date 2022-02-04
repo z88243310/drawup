@@ -63,6 +63,7 @@
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
   {{#if comments}}
+    <input type="hidden" name="mediaJson" value="{{toJson media}}">
     <button type="submit" class="btn-draw btn mt-4 mb-5 mx-auto"
       onclick="return confirm(`進入抽獎頁面`)">準備抽獎</button>
   {{else}}
@@ -70,7 +71,7 @@
   {{/if}}
 {{else}}
   <button type="button" onclick="submit()" class="btn-auth btn mt-4 mb-5 mx-auto">請先授權 <i
-      class="fab fa-facebook-square" style=""></i>
+      class="fab fa-facebook-square"></i>
     facebook</button>
 {{/if}}
 </form>

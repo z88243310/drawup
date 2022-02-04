@@ -6,6 +6,7 @@ const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
 const dayjs = require('dayjs') // 載入 dayjs 套件
+const { json } = require('express')
 module.exports = {
   // 取得當年年份作為 currentYear 的屬性值，並導出
   currentYear: () => dayjs().year(),
@@ -30,5 +31,7 @@ module.exports = {
   // 取得當年年份作為 currentYear 的屬性值，並導出
   adjustDate: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
   // 位移 index +1
-  increment: value => parseInt(value) + 1
+  increment: value => parseInt(value) + 1,
+  // 將物件轉乘 json 用於傳值
+  toJson: object => JSON.stringify(object)
 }

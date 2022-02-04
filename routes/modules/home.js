@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 })
 
 // show posts to comment page
-router.post('/', async (req, res) => {
+router.post('/', authenticated, async (req, res) => {
   const { accessToken } = getUser(req)
   const postId = req.body.postId ? cryptr.decrypt(req.body.postId) : ''
   if (!postId) return res.redirect('back')

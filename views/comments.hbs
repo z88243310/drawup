@@ -13,11 +13,11 @@
     <form action="/draw" method="get">
       <fieldset>
   {{else}}
-    <form class="" action="/post" method="get">
+    <form action="/post" method="get">
       <fieldset disabled>
   {{/if}}
 {{else}}
-  <form class="" action="/auth/facebook" method="get">
+  <form action="/auth/facebook" method="get">
     <fieldset disabled>
 {{/if}}
 <!-- 設定條件 -->
@@ -56,8 +56,8 @@
     </tr>
   </tbody>
 </table>
-<button id="btn-add" class="btn btn-secondary d-inline-block">+</button>
-<button id="btn-delete" class="btn btn-secondary d-inline-block">–</button>
+<button type="button" id="btn-add" class="btn btn-secondary d-inline-block">+</button>
+<button type="button" id="btn-delete" class="btn btn-secondary d-inline-block">–</button>
 </fieldset>
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
@@ -65,10 +65,11 @@
     <button type="submit" class="btn-draw btn mt-4 mb-5 mx-auto"
       onclick="return confirm(`進入抽獎頁面`)">準備抽獎</button>
   {{else}}
-    <button type="submit" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
+    <button type="button" onclick="submit()" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
   {{/if}}
 {{else}}
-  <button type="submit" class="btn-auth btn btn-danger mt-4 mb-5 mx-auto">請先授權 facebook</button>
+  <button type="button" onclick="submit()" class="btn-auth btn btn-danger mt-4 mb-5 mx-auto">請先授權
+    facebook</button>
 {{/if}}
 </form>
 <!-- 留言表 -->

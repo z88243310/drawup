@@ -9,6 +9,13 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
+          {{#if isAuthenticated}}
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+              <li class="nav-item">
+                <a class="nav-link" href="/post">選擇貼文</a>
+              </li>
+            </ul>
+          {{/if}}
           <ul class="navbar-nav ms-auto mb-2 mb-md-0">
             <li class="nav-item d-inline-flex align-items-center">
               <span class="text-white nav-link">Hi, {{ user.name }}</span>

@@ -42,16 +42,23 @@ const drawController = {
   getMedia: async (req, res, next) => {
     const { accessToken } = getUser(req)
     const igSelected = req.query?.igSelected
+
+    // 如果已經有 ig 資料就直接取出
+    let igJson = req.query?.igJson
+    ig = igJson ? JSON.parse(igJson) : ''
+
     const before = req.query?.before
     const after = req.query?.after
 
     try {
-      // 取出 instagram_business_account id
-      const nameResponse = await axios.get(`
+      // 如果沒有 ig 資料，就請求 instagram_business_account id
+      const nameResponse = !ig
+        ? await axios.get(`
       https://graph.facebook.com/v12.0/me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`)
-      const ig = nameResponse?.data?.data
+        : ''
+      ig = nameResponse ? nameResponse?.data?.data : ig
       // encrypt id
-      if (typeof ig === 'object') {
+      if (typeof ig === 'object' && nameResponse) {
         ig.forEach(content => {
           content.instagram_business_account.id = cryptr.encrypt(content.instagram_business_account.id)
         })
@@ -66,6 +73,7 @@ const drawController = {
             )}/?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp}&access_token=${accessToken}`
           )
         : ''
+
       const media = mediaResponse?.data?.media?.data
       // encrypt id
       if (typeof media === 'object') {
@@ -73,10 +81,8 @@ const drawController = {
           content.id = cryptr.encrypt(content.id)
         })
       }
-
-      const cursor = mediaResponse?.data?.media?.paging?.cursors
-
-      return res.render('total-media', { ig, media, cursor, igSelected })
+      const paging = mediaResponse?.data?.media?.paging
+      return res.render('total-media', { ig, media, paging, igSelected })
     } catch (e) {
       next(e)
     }

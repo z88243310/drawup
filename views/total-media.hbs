@@ -2,6 +2,7 @@
 <h1>選擇貼文</h1>
 <div class="row mx-auto mt-2" style="max-width: 750px;">
   <form class="ig-form" onchange="this.submit()" method="get">
+    <input type="hidden" name="igJson" value="{{toJson ig}}">
     <select name="igSelected" id="ig-select" class="shadow-sm">
       <option value="">請選擇IG帳號</option>
       {{#each ig}}
@@ -11,6 +12,9 @@
         </option>
       {{/each}}
     </select>
+    {{#unless ig}} <a
+        href="https://www.facebook.com/business/help/898752960195806">請確認FB粉絲專頁是否已連結IG商業帳號</a>
+    {{/unless}}
   </form>
   {{#each media}}
     <div class="col-12 mt-3">
@@ -43,10 +47,15 @@
     </div>
   {{/each}}
 </div>
-{{#if cursor}}
+{{#if paging}}
   <div class="mx-auto text-center mt-4 mb-4">
-    <a class="btn-page btn mr-4"
-      href="/post?before={{cursor.before}}&igSelected={{igSelected}}">上一頁</a>
-    <a class="btn-page btn" href="/post?after={{cursor.after}}&igSelected={{igSelected}}">下一頁</a>
+    {{#if paging.previous}}
+      <a class="btn-page btn mr-4"
+        href="/draw/post?before={{paging.cursors.before}}&igSelected={{igSelected}}&igJson={{toJson ig}}">上一頁</a>
+    {{/if}}
+    {{#if paging.next}}
+      <a class="btn-page btn"
+        href="/draw/post?after={{paging.cursors.after}}&igSelected={{igSelected}}&igJson={{toJson ig}}">下一頁</a>
+    {{/if}}
   </div>
 {{/if}}

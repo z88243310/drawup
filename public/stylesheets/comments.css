@@ -11,11 +11,12 @@
   width: 60%;
   display: block;
   max-width: 350px;
+  font-weight: 600;
 }
 .btn-draw,
 .btn-post {
-  background-color: #17a2b8;
-  border: 1px solid #17a2b8;
+  background-color: #16a5ad;
+  border: 1px solid #16a5ad;
   color: white;
 }
 .btn-draw:hover,
@@ -24,9 +25,20 @@
   border: 1px solid #0d7281;
   color: white;
 }
+.btn-auth {
+  background-color: #fd7b13;
+  border: 1px solid #fd7b13;
+  color: white;
+}
+.btn-auth:hover {
+  background-color: #fd943e;
+  border: 1px solid #fd943e;
+  color: white;
+}
 
 .count {
   width: 60%;
+  font-weight: 900;
 }
 
 .item-name,
@@ -42,8 +54,22 @@
   margin: 0px;
   padding: 0px;
   font-weight: 900;
+  position: relative;
+}
+
+#btn-add span,
+#btn-delete span {
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  transform: translate(-50%, -2px);
 }
 
 legend {
   font-weight: 600;
+}
+
+thead,
+tbody {
+  color: #032f38;
 }

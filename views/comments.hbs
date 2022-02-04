@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="stylesheets/comments.css">
-
 <!-- 貼文縮圖 -->
 <div class="show-form">
   <div class="img mx-auto mb-2" {{#if image_url}}
@@ -30,8 +29,8 @@
 </div>
 <div class="mb-3">
   <label for="tag" class="form-label">標記人數</label>
-  <input type="number" id="tag" class="form-control" placeholder="1-10" name="tag"
-    value="{{#if tag}}{{tag}}{{else}}1{{/if}}" min="1" max="10" required>
+  <input type="number" id="tag" class="form-control" placeholder="0-10" name="tag"
+    value="{{#if tag}}{{tag}}{{else}}0{{/if}}" min="0" max="10" required>
 </div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
@@ -40,7 +39,7 @@
 </div>
 <!-- 設定獎項 -->
 <legend>設定獎項</legend>
-<table class=" table align-middle">
+<table class="table align-middle">
   <thead class="thead-dark">
     <tr>
       <th scope="col">#</th>
@@ -57,8 +56,9 @@
     </tr>
   </tbody>
 </table>
-<button type="button" id="btn-add" class="btn btn-secondary d-inline-block">+</button>
-<button type="button" id="btn-delete" class="btn btn-secondary d-inline-block">–</button>
+<button type="button" id="btn-add" class="btn btn-secondary d-inline-block"><span>+</span></button>
+<button type="button" id="btn-delete"
+  class="btn btn-secondary d-inline-block"><span>–</span></button>
 </fieldset>
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
@@ -69,7 +69,8 @@
     <button type="button" onclick="submit()" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
   {{/if}}
 {{else}}
-  <button type="button" onclick="submit()" class="btn-auth btn btn-danger mt-4 mb-5 mx-auto">請先授權
+  <button type="button" onclick="submit()" class="btn-auth btn mt-4 mb-5 mx-auto">請先授權 <i
+      class="fab fa-facebook-square" style=""></i>
     facebook</button>
 {{/if}}
 </form>

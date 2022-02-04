@@ -1,31 +1,40 @@
+<link rel="stylesheet" href="/stylesheets/header.css">
 <header>
-  <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark px-4">
+  <nav class="navbar navbar-expand-lg fixed-top navbar-dark px-2" style="background-color:#16A5AD;">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">IG抽起來</a>
-      {{#if user}}
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          {{#if isAuthenticated}}
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <a class="navbar-brand" href="/" style="font-weight:900;"><i class="fas fa-ghost fs-4"
+          style="color:white;"></i><span style="margin-left: 8px;">IG抽起來</span> </a>
+      <button class=" navbar-toggler" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        {{#if isAuthenticated}}
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/post">選擇貼文</a>
+            </li>
+          </ul>
+          {{#if user}}
+            <ul class="navbar-nav ms-auto mb-2 mb-md-0">
               <li class="nav-item">
-                <a class="nav-link" href="/post">選擇貼文</a>
+                <a href="/auth/logout">
+                  <i class="btn-logout fas fa-key btn"></i>
+                </a>
               </li>
             </ul>
           {{/if}}
+        {{else}}
           <ul class="navbar-nav ms-auto mb-2 mb-md-0">
-            <li class="nav-item d-inline-flex align-items-center">
-              <span class="text-white nav-link">Hi, {{ user.name }}</span>
-            </li>
             <li class="nav-item">
-              <a href="/auth/logout"><button class="btn btn-danger my-sm-0 my-2">授權中</button></a>
+              <a href="/auth/facebook">
+                <i class="btn-login fas fa-key btn btn-secondary"></i>
+              </a>
             </li>
           </ul>
-        </div>
-      {{/if}}
+        {{/if}}
+      </div>
     </div>
   </nav>
 </header>

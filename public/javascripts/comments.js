@@ -9,8 +9,8 @@ btnAdd.addEventListener('click', function onAddButtonClicked(event) {
   const raw = `
       <tr>
         <th scope="row">${id}</th>
-        <td><input type="text" class="item-name" name="itemName-${id}"></td>
-        <td><input type="number" class="item-num" min="1" max="5" name="itemNum-${id}" value="1"></td>
+        <td><input type="text" class="item-name" name="itemName-${id}" required></td>
+        <td><input type="number" class="item-num" min="1" max="5" name="itemNum-${id}" value="1" required></td>
       </tr>
       `
   award.innerHTML += raw

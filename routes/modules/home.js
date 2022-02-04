@@ -9,12 +9,15 @@ if (process.env.NODE_ENV !== 'production') {
 const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
+const { authenticated } = require('../../middleware/auth')
 const { getUser } = require('../../helpers/auth-helpers')
 
 // auth page
 router.get('/', (req, res) => {
   res.render('comments')
 })
+
+// show posts to comment page
 router.post('/', async (req, res) => {
   const { accessToken } = getUser(req)
   const postId = req.body.postId ? cryptr.decrypt(req.body.postId) : ''
@@ -23,19 +26,24 @@ router.post('/', async (req, res) => {
   const after = req.query?.after || ''
   const commentQuery = 'media' + (after ? `.after(${after})` : '') + (before ? `.before(${before})` : '') + '.limit(4)'
 
-  // get comments
-  const commentResponse = await axios.get(`
+  try {
+    // get comments
+    const commentResponse = await axios.get(`
       https://graph.facebook.com/v12.0/${postId}?fields=comments{text,timestamp,username},media_type,media_url,thumbnail_url&access_token=${accessToken}`)
 
-  const comments = commentResponse?.data?.comments?.data
-  const media_url = commentResponse?.data?.media_url
-  const thumbnail_url = commentResponse?.data?.thumbnail_url
-  const media_type = commentResponse?.data?.media_type
-  const image_url = media_type === 'VIDEO' ? thumbnail_url : media_url
-  res.render('comments', { comments, image_url })
+    const comments = commentResponse?.data?.comments?.data
+    const media_url = commentResponse?.data?.media_url
+    const thumbnail_url = commentResponse?.data?.thumbnail_url
+    const media_type = commentResponse?.data?.media_type
+    const image_url = media_type === 'VIDEO' ? thumbnail_url : media_url
+    res.render('comments', { comments, image_url })
+  } catch (e) {
+    next(e)
+  }
 })
 
-router.get('/post', async (req, res) => {
+// get posts
+router.get('/post', authenticated, async (req, res, next) => {
   const { accessToken } = getUser(req)
   const igSelected = req.query?.igSelected || ''
   const before = req.query?.before || ''
@@ -73,7 +81,7 @@ router.get('/post', async (req, res) => {
 
     return res.render('total-media', { ig, media, cursor, igSelected })
   } catch (e) {
-    console.log(e.message)
+    next(e)
   }
 })
 

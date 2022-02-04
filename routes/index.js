@@ -3,21 +3,17 @@ const router = express.Router()
 
 // middleware & controller & modules
 const { generalErrorHandler } = require('../middleware/error-handler')
-const { authenticated } = require('../middleware/auth')
-
-const drawController = require('../controller/draw-controller')
 
 const auth = require('./modules/auth')
+const draw = require('./modules/draw')
 
 // facebook auth
 router.use('/auth', auth)
 
-// show comment page
-router.get('/', drawController.showCommentPage)
-// show posts to comment page
-router.post('/', authenticated, drawController.postMediaComment)
-// get all media
-router.get('/post', authenticated, drawController.getMedia)
+// draw
+router.use('/draw', draw)
+
+router.get('/', (req, res) => res.redirect('/draw'))
 
 // 錯誤處理 middleware
 router.use('/', generalErrorHandler)

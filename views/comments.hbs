@@ -10,10 +10,10 @@
 <!-- 有認證且有留言，即可抽籤 -->
 {{#if isAuthenticated}}
   {{#if comments}}
-    <form action="/draw" method="get">
+    <form action="/draw/action" method="post">
       <fieldset>
   {{else}}
-    <form action="/post" method="get">
+    <form action="/draw/post" method="get">
       <fieldset disabled>
   {{/if}}
 {{else}}

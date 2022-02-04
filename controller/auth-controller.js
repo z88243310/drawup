@@ -5,7 +5,7 @@ const authController = {
     scope: ['email', 'public_profile']
   }),
   facebookCallback: passport.authenticate('facebook', {
-    successRedirect: '/post',
+    successRedirect: '/draw/post',
     failureRedirect: '/'
   }),
   logout: (req, res) => {

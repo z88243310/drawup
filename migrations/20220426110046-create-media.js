@@ -10,11 +10,11 @@ module.exports = {
       },
       caption: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.TEXT('long')
       },
       media_id: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.TEXT('long')
       },
       media_type: {
         allowNull: false,
@@ -22,7 +22,7 @@ module.exports = {
       },
       image_url: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.TEXT('long')
       },
       permalink: {
         allowNull: false,
@@ -43,11 +43,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

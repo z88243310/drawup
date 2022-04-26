@@ -68,10 +68,10 @@ const drawController = {
       const mediaQuery = 'media' + (after ? `.after(${after})` : '') + (before ? `.before(${before})` : '') + '.limit(4)'
       let mediaResponse = igSelected
         ? await axios.get(
-            `https://graph.facebook.com/v12.0/${cryptr.decrypt(
-              igSelected
-            )}/?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp}&access_token=${accessToken}`
-          )
+          `https://graph.facebook.com/v12.0/${cryptr.decrypt(
+            igSelected
+          )}/?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink}&access_token=${accessToken}`
+        )
         : ''
 
       const media = mediaResponse?.data?.media?.data

@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media } = require('../models')
+const { Media, Comment } = require('../models')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -37,7 +37,10 @@ const drawController = {
 
     try {
       // 刪除 media from DB
-      await Media.destroy({ where: { userId: id } })
+      const mediaFound = await Media.findOne({ where: { userId: id } })
+      await mediaFound.destroy()
+      await Comment.destroy({ where: { mediaId: mediaFound.mediaId } })
+
 
       // 新增 media to DB
       await Media.create({
@@ -48,9 +51,19 @@ const drawController = {
       })
 
       // get comments
-      const commentResponse = await axios.get(`
+      if (commentsCount) {
+        const commentResponse = await axios.get(`
       https://graph.facebook.com/v12.0/${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`)
-      const comments = commentResponse?.data?.comments?.data
+
+        const comments = commentResponse?.data?.comments?.data
+
+        comments?.forEach(comment => {
+          comment.commentId = cryptr.encrypt(comment.id)
+          comment.mediaId = media.id
+          delete comment.id
+        })
+        await Comment.bulkCreate(comments)
+      }
 
       res.render('comments', { comments, media, imageUrl })
     } catch (e) {

@@ -12,7 +12,24 @@ const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
 const drawController = {
   // show auth page
-  showCommentPage: (req, res) => res.render('comments'),
+  showCommentPage: async (req, res) => {
+    const user = getUser(req)
+
+    if (!user) return res.render('comments')
+
+    const { id } = user
+
+    const media = await Media.findOne({
+      where: { userId: id },
+      raw: true
+    })
+    const comments = await Comment.findAll({
+      where: { mediaId: media.mediaId },
+      raw: true
+    })
+
+    res.render('comments', { comments, media })
+  },
   // show posts to comment page
   postMediaComment: async (req, res, next) => {
     const { id, accessToken } = getUser(req)
@@ -65,7 +82,8 @@ const drawController = {
         await Comment.bulkCreate(comments)
       }
 
-      res.render('comments', { comments, media, imageUrl })
+      res.redirect('/')
+
     } catch (e) {
       next(e)
     }

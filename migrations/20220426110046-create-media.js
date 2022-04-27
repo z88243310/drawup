@@ -9,7 +9,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       caption: {
-        allowNull: false,
         type: Sequelize.TEXT('long')
       },
       raw_id: {
@@ -37,6 +36,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       comments_count: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       user_id: {

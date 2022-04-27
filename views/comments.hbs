@@ -92,10 +92,14 @@
     {{#each comments}}
       <tr>
         <th scope="row">{{increment @index}}</th>
-        <td>{{this.username}}</td>
-        <td>{{this.text}}</td>
-        <td>{{this.text}}</td>
-        <td>{{adjustDate this.timestamp}}</td>
+        <td class="text-nowrap text-truncate" style="max-width:75px;" data-toggle="tooltip"
+          data-placement="top" title="{{this.username}}">{{this.username}}</td>
+        <td class="text-nowrap text-truncate" style="max-width:100px;" data-toggle="tooltip"
+          data-placement="top" title="{{this.text}}">{{this.text}} </td>
+        <td style="min-width:50px">{{this.tagCount}}</td>
+        <td class="text-nowrap text-truncate" style="max-width:75px;" data-toggle="tooltip"
+          data-placement="top" title="{{adjustDate this.timestamp}}">{{adjustDate this.timestamp}}
+        </td>
       </tr>
     {{/each}}
   </tbody>

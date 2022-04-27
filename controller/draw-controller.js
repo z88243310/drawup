@@ -26,9 +26,9 @@ const drawController = {
         include: [Comment],
         nest: true
       })
-      media = media.toJSON()
+      media = media?.toJSON()
 
-      res.render('comments', { comments: media.Comments, media })
+      res.render('comments', { comments: media?.Comments, media })
     } catch (e) {
       next(e)
     }

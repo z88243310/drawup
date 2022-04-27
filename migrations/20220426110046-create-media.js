@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.TEXT('long')
       },
-      media_id: {
+      raw_id: {
         allowNull: false,
         type: Sequelize.TEXT('long')
       },

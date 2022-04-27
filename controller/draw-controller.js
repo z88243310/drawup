@@ -12,23 +12,26 @@ const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
 const drawController = {
   // show auth page
-  showCommentPage: async (req, res) => {
-    const user = getUser(req)
+  showCommentPage: async (req, res, next) => {
+    try {
+      const user = getUser(req)
 
-    if (!user) return res.render('comments')
+      if (!user) return res.render('comments')
 
-    const { id } = user
+      const { id } = user
 
-    const media = await Media.findOne({
-      where: { userId: id },
-      raw: true
-    })
-    const comments = await Comment.findAll({
-      where: { mediaId: media.mediaId },
-      raw: true
-    })
+      // 取得 media and comments
+      let media = await Media.findOne({
+        where: { userId: id },
+        include: [Comment],
+        nest: true
+      })
+      media = media.toJSON()
 
-    res.render('comments', { comments, media })
+      res.render('comments', { comments: media.Comments, media })
+    } catch (e) {
+      next(e)
+    }
   },
   // show posts to comment page
   postMediaComment: async (req, res, next) => {
@@ -53,16 +56,16 @@ const drawController = {
     const mediaId = media ? cryptr.decrypt(media.id) : ''
 
     try {
-      // 刪除 media from DB
-      const mediaFound = await Media.findOne({ where: { userId: id } })
-      await mediaFound.destroy()
-      await Comment.destroy({ where: { mediaId: mediaFound.mediaId } })
-
+      // 刪除 media,comments from DB
+      await Promise.all([
+        Media.destroy({ where: { userId: id } }),
+        Comment.destroy({ where: { userId: id } })
+      ])
 
       // 新增 media to DB
-      await Media.create({
+      const mediaNew = await Media.create({
         userId: id,
-        mediaId: media.id,
+        rawId: media.id,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl
       })
@@ -75,8 +78,9 @@ const drawController = {
         const comments = commentResponse?.data?.comments?.data
 
         comments?.forEach(comment => {
-          comment.commentId = cryptr.encrypt(comment.id)
-          comment.mediaId = media.id
+          comment.rawId = cryptr.encrypt(comment.id)
+          comment.mediaId = mediaNew.id
+          comment.userId = id
           delete comment.id
         })
         await Comment.bulkCreate(comments)

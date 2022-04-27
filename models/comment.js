@@ -18,8 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     text: DataTypes.STRING,
     timestamp: DataTypes.DATE,
     username: DataTypes.STRING,
-    commentId: DataTypes.TEXT,
-    mediaId: DataTypes.TEXT,
+    rawId: DataTypes.TEXT,
+    userId: DataTypes.INTEGER,
+    mediaId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Comment',

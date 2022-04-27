@@ -19,13 +19,17 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      comment_id: {
+      raw_id: {
         allowNull: false,
         type: Sequelize.TEXT('long')
       },
+      user_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       media_id: {
         allowNull: false,
-        type: Sequelize.TEXT('long')
+        type: Sequelize.INTEGER
       },
       created_at: {
         allowNull: false,

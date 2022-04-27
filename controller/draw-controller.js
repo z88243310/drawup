@@ -1,6 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
+const { Media, Comment } = require('../models')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -11,29 +12,82 @@ const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
 const drawController = {
   // show auth page
-  showCommentPage: (req, res) => res.render('comments'),
+  showCommentPage: async (req, res, next) => {
+    try {
+      const user = getUser(req)
+
+      if (!user) return res.render('comments')
+
+      const { id } = user
+
+      // 取得 media and comments
+      let media = await Media.findOne({
+        where: { userId: id },
+        include: [Comment],
+        nest: true
+      })
+      media = media?.toJSON()
+
+      res.render('comments', { comments: media?.Comments, media })
+    } catch (e) {
+      next(e)
+    }
+  },
   // show posts to comment page
   postMediaComment: async (req, res, next) => {
-    const { accessToken } = getUser(req)
+    const { id, accessToken } = getUser(req)
+
     // 取得 media，若無直接返回
     const mediaJson = req.body?.mediaJson
     if (!mediaJson) return res.redirect('back')
     media = JSON.parse(mediaJson)
-    const { media_url, thumbnail_url, media_type } = media
+
+    const mediaUrl = media.media_url
+    const thumbnailUrl = media.thumbnail_url
+    const mediaType = media.media_type
+    const likeCount = media.like_count
+    const commentsCount = media.comments_count
+    const { caption, timestamp, permalink } = media
 
     // 確認類型，回傳正確圖片 url
-    const image_url = media_type === 'VIDEO' ? thumbnail_url : media_url
+    const imageUrl = mediaType === 'VIDEO' ? thumbnailUrl : mediaUrl
 
-    // 取得 media id 並且 解碼
+    // 取得解碼後的 mediaId
     const mediaId = media ? cryptr.decrypt(media.id) : ''
 
     try {
-      // get comments
-      const commentResponse = await axios.get(`
-      https://graph.facebook.com/v12.0/${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`)
-      const comments = commentResponse?.data?.comments?.data
+      // 刪除 media,comments from DB
+      await Promise.all([
+        Media.destroy({ where: { userId: id } }),
+        Comment.destroy({ where: { userId: id } })
+      ])
 
-      res.render('comments', { comments, media, image_url })
+      // 新增 media to DB
+      const mediaNew = await Media.create({
+        userId: id,
+        rawId: media.id,
+        mediaType, likeCount, commentsCount, caption,
+        timestamp, permalink, imageUrl
+      })
+
+      // get comments
+      if (commentsCount) {
+        const commentResponse = await axios.get(`
+      https://graph.facebook.com/v12.0/${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`)
+
+        const comments = commentResponse?.data?.comments?.data
+
+        comments?.forEach(comment => {
+          comment.rawId = cryptr.encrypt(comment.id)
+          comment.mediaId = mediaNew.id
+          comment.userId = id
+          delete comment.id
+        })
+        await Comment.bulkCreate(comments)
+      }
+
+      res.redirect('/')
+
     } catch (e) {
       next(e)
     }
@@ -68,10 +122,10 @@ const drawController = {
       const mediaQuery = 'media' + (after ? `.after(${after})` : '') + (before ? `.before(${before})` : '') + '.limit(4)'
       let mediaResponse = igSelected
         ? await axios.get(
-            `https://graph.facebook.com/v12.0/${cryptr.decrypt(
-              igSelected
-            )}/?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp}&access_token=${accessToken}`
-          )
+          `https://graph.facebook.com/v12.0/${cryptr.decrypt(
+            igSelected
+          )}/?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink}&access_token=${accessToken}`
+        )
         : ''
 
       const media = mediaResponse?.data?.media?.data

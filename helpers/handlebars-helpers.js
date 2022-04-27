@@ -29,7 +29,7 @@ module.exports = {
     }
   },
   // 取得當年年份作為 currentYear 的屬性值，並導出
-  adjustDate: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
+  adjustDate: date => dayjs(date).format('MM-DD-YYYY HH:mm'),
   // 位移 index +1
   increment: value => parseInt(value) + 1,
   // 將物件轉乘 json 用於傳值

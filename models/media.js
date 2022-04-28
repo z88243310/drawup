@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Media.belongsTo(models.User, { foreignKey: 'userId' })
       Media.hasMany(models.Comment, { foreignKey: 'mediaId' })
       Media.hasOne(models.Condition, { foreignKey: 'mediaId' })
+      Media.hasMany(models.Award, { foreignKey: 'mediaId' })
     }
   }
   Media.init({

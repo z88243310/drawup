@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Media.belongsTo(models.User, { foreignKey: 'userId' })
       Media.hasMany(models.Comment, { foreignKey: 'mediaId' })
+      Media.hasOne(models.Condition, { foreignKey: 'mediaId' })
     }
   }
   Media.init({

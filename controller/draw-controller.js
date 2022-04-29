@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment } = require('../models')
+const { Media, Comment, Condition } = require('../models')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -137,6 +137,30 @@ const drawController = {
       }
       const paging = mediaResponse?.data?.media?.paging
       return res.render('total-media', { ig, media, paging, igSelected })
+    } catch (e) {
+      next(e)
+    }
+  },
+  postCondition: async (req, res, next) => {
+    try {
+      const { repeatAmount, tagAmount, deadline, mediaId } = req.body
+      const userId = getUser(req).id
+
+      // 搜尋或新增一筆 Condition
+      const [conditionFound, conditionCreated] = await Condition.findOrCreate({
+        where: { userId, mediaId },
+        defaults: {
+          repeatAmount, tagAmount, deadline, mediaId, userId
+        }
+      })
+
+      // 如果有搜尋到則更新 Condition 資料
+      if (!conditionCreated) {
+        await conditionFound.update({
+          repeatAmount, tagAmount, deadline, mediaId, userId
+        })
+      }
+
     } catch (e) {
       next(e)
     }

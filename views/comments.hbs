@@ -12,6 +12,7 @@
   {{#if comments}}
     <form action="/draw/action" method="post">
       <fieldset>
+        <input type="hidden" name="mediaId" value="{{media.id}}">
   {{else}}
     <form action="/draw/post" method="get">
       <fieldset disabled>
@@ -23,18 +24,18 @@
 <!-- 設定條件 -->
 <legend>設定抽獎條件</legend>
 <div class="mb-3">
-  <label for="repeat" class="form-label">重複留言個數</label>
-  <input type="number" id="repeat" class="form-control" placeholder="1-20" name="repeat"
+  <label for="repeatAmount" class="form-label">重複留言個數</label>
+  <input type="number" id="repeatAmount" class="form-control" placeholder="1-20" name="repeatAmount"
     value="{{#if repeat}}{{repeat}}{{else}}1{{/if}}" min="1" max="20" required>
 </div>
 <div class="mb-3">
-  <label for="tag" class="form-label">標記人數</label>
-  <input type="number" id="tag" class="form-control" placeholder="0-10" name="tag"
+  <label for="tagAmount" class="form-label">標記人數</label>
+  <input type="number" id="tagAmount" class="form-control" placeholder="0-10" name="tagAmount"
     value="{{#if tag}}{{tag}}{{else}}0{{/if}}" min="0" max="10" required>
 </div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
-  <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="date"
+  <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="deadline"
     value="{{date}}" required>
 </div>
 <!-- 設定獎項 -->

@@ -11,5 +11,8 @@ router.get('/', drawController.showCommentPage)
 router.post('/', authenticated, drawController.postMediaComment)
 // get all media
 router.get('/post', authenticated, drawController.getMedia)
+// post condition to action
+router.post('/action', authenticated, drawController.postCondition)
+
 
 module.exports = router

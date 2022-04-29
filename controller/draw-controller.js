@@ -24,6 +24,7 @@ const drawController = {
       let media = await Media.findOne({
         where: { userId: id },
         include: [Comment, Condition],
+        order: [['updated_at', 'DESC']],
         nest: true
       })
       media = media?.toJSON()
@@ -60,19 +61,32 @@ const drawController = {
     const mediaId = media ? cryptr.decrypt(media.id) : ''
 
     try {
-      // 刪除 media,comments from DB
+      // 刪除 comments from DB
       await Promise.all([
-        Media.destroy({ where: { userId: id } }),
         Comment.destroy({ where: { userId: id } })
       ])
 
-      // 新增 media to DB
-      const mediaNew = await Media.create({
-        userId: id,
-        rawId: media.id,
-        mediaType, likeCount, commentsCount, caption,
-        timestamp, permalink, imageUrl
+      // 搜尋或新增一筆 Media
+      const [mediaNew, mediaCreated] = await Media.findOrCreate({
+        where: { rawId: mediaId },
+        defaults: {
+          userId: id,
+          rawId: mediaId,
+          mediaType, likeCount, commentsCount, caption,
+          timestamp, permalink, imageUrl
+        }
       })
+
+      // 如果有搜尋到則更新 Media 資料
+      if (!mediaCreated) {
+        await mediaNew.update({
+          userId: id,
+          rawId: mediaId,
+          mediaType, likeCount, commentsCount, caption,
+          timestamp, permalink, imageUrl,
+          updatedAt: new Date()
+        })
+      }
 
       // get comments
       if (commentsCount) {
@@ -151,7 +165,7 @@ const drawController = {
       const userId = getUser(req).id
 
       // 搜尋或新增一筆 Condition
-      const [conditionFound, conditionCreated] = await Condition.findOrCreate({
+      const [conditionNew, conditionCreated] = await Condition.findOrCreate({
         where: { userId, mediaId },
         defaults: {
           repeatAmount, tagAmount, deadline, mediaId, userId
@@ -160,7 +174,7 @@ const drawController = {
 
       // 如果有搜尋到則更新 Condition 資料
       if (!conditionCreated) {
-        await conditionFound.update({
+        await conditionNew.update({
           repeatAmount, tagAmount, deadline, mediaId, userId
         })
       }

@@ -25,12 +25,14 @@ module.exports = (sequelize, DataTypes) => {
     timestamp: DataTypes.DATE,
     likeCount: DataTypes.INTEGER,
     commentsCount: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER
+    userId: DataTypes.INTEGER,
+    updatedAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Media',
     tableName: 'Media',
-    underscored: true
+    underscored: true,
+    timestamps: false
   });
   return Media;
 };

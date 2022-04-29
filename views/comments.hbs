@@ -26,17 +26,19 @@
 <div class="mb-3">
   <label for="repeatAmount" class="form-label">重複留言個數</label>
   <input type="number" id="repeatAmount" class="form-control" placeholder="1-20" name="repeatAmount"
-    value="{{#if repeat}}{{repeat}}{{else}}1{{/if}}" min="1" max="20" required>
+    value="{{#if condition.repeatAmount}}{{condition.repeatAmount}}{{else}}1{{/if}}" min="1"
+    max="20" required>
 </div>
 <div class="mb-3">
   <label for="tagAmount" class="form-label">標記人數</label>
   <input type="number" id="tagAmount" class="form-control" placeholder="0-10" name="tagAmount"
-    value="{{#if tag}}{{tag}}{{else}}0{{/if}}" min="0" max="10" required>
+    value="{{#if condition.tagAmount}}{{condition.tagAmount}}{{else}}0{{/if}}" min="0" max="10"
+    required>
 </div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
   <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="deadline"
-    value="{{date}}" required>
+    value="{{#if condition.deadline}}{{formatDate condition.deadline}}{{/if}}" required>
 </div>
 <!-- 設定獎項 -->
 <legend>設定獎項</legend>

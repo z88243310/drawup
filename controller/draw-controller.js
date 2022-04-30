@@ -201,7 +201,7 @@ const drawController = {
     const { id, accessToken } = getUser(req)
 
     try {
-      const { repeatAmount, tagAmount, deadline, mediaId } = req.body
+      const { repeatAmount, tagAmount, deadline, mediaId, awardNames, awardAmounts } = req.body
       const userId = getUser(req).id
 
       // 找出 media rawId
@@ -246,6 +246,19 @@ const drawController = {
           repeatAmount, tagAmount, deadline, mediaId, userId,
           updatedAt: new Date()
         })
+      }
+
+      // 刪除 award from DB
+      await Award.destroy({ where: { userId, mediaId } })
+
+      // 處理 awards
+      if (awardNames) {
+        const awards = awardNames.map((_, index) => {
+          const name = awardNames[index]
+          const amount = awardAmounts[index]
+          return { name, amount, mediaId, userId }
+        })
+        await Award.bulkCreate(awards)
       }
 
       // 刪除 comments from DB

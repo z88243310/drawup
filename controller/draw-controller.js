@@ -61,11 +61,6 @@ const drawController = {
     const mediaId = media ? cryptr.decrypt(media.id) : ''
 
     try {
-      // 刪除 comments from DB
-      await Promise.all([
-        Comment.destroy({ where: { userId: id } })
-      ])
-
       // 搜尋或新增一筆 Media
       const [mediaNew, mediaCreated] = await Media.findOrCreate({
         where: { rawId: mediaId },
@@ -88,6 +83,9 @@ const drawController = {
         })
       }
 
+      // 刪除 comments from DB
+      await Comment.destroy({ where: { userId: id } })
+
       // get comments
       if (commentsCount) {
         const commentResponse = await axios.get(`
@@ -104,7 +102,7 @@ const drawController = {
         await Comment.bulkCreate(comments)
       }
 
-      res.redirect('/')
+      res.redirect('/draw')
 
     } catch (e) {
       next(e)
@@ -178,6 +176,61 @@ const drawController = {
           repeatAmount, tagAmount, deadline, mediaId, userId
         })
       }
+
+      res.redirect('/draw/action')
+
+    } catch (e) {
+      next(e)
+    }
+  },
+  putComment: async (req, res, next) => {
+    console.log('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+    const { id, accessToken } = getUser(req)
+
+    try {
+      const { repeatAmount, tagAmount, deadline, mediaId } = req.body
+      const userId = getUser(req).id
+      console.log(req.body)
+
+      // 搜尋或新增一筆 Condition
+      const [conditionNew, conditionCreated] = await Condition.findOrCreate({
+        where: { userId, mediaId },
+        defaults: {
+          repeatAmount, tagAmount, deadline, mediaId, userId
+        }
+      })
+
+      // 如果有搜尋到則更新 Condition 資料
+      if (!conditionCreated) {
+        await conditionNew.update({
+          repeatAmount, tagAmount, deadline, mediaId, userId
+        })
+      }
+
+      // 找出 media rawId
+      const mediaOne = await Media.findOne({ where: { id: mediaId } })
+      const mediaRawId = mediaOne.rawId
+
+      // 刪除 comments from DB
+      await Comment.destroy({ where: { userId: id } })
+
+      // get comments
+      const commentResponse = await axios.get(`
+      https://graph.facebook.com/v12.0/${mediaRawId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`)
+
+      const comments = commentResponse?.data?.comments?.data
+
+      // write comments to db
+      if (comments) {
+        comments.forEach(comment => {
+          comment.rawId = cryptr.encrypt(comment.id)
+          comment.mediaId = mediaId
+          comment.userId = id
+          delete comment.id
+        })
+        await Comment.bulkCreate(comments)
+      }
+      res.redirect('/draw')
 
     } catch (e) {
       next(e)

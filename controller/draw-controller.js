@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment, Condition } = require('../models')
+const { Media, Comment, Condition, Award } = require('../models')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -159,7 +159,7 @@ const drawController = {
   },
   postCondition: async (req, res, next) => {
     try {
-      const { repeatAmount, tagAmount, deadline, mediaId } = req.body
+      const { repeatAmount, tagAmount, deadline, mediaId, awardNames, awardAmounts } = req.body
       const userId = getUser(req).id
 
       // 搜尋或新增一筆 Condition
@@ -175,6 +175,19 @@ const drawController = {
         await conditionNew.update({
           repeatAmount, tagAmount, deadline, mediaId, userId
         })
+      }
+
+      // 刪除 award from DB
+      await Award.destroy({ where: { userId, mediaId } })
+
+      // 處理 awards
+      if (awardNames) {
+        const awards = awardNames.map((_, index) => {
+          const name = awardNames[index]
+          const amount = awardAmounts[index]
+          return { name, amount, mediaId, userId }
+        })
+        await Award.bulkCreate(awards)
       }
 
       res.redirect('/draw/action')

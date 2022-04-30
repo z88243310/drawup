@@ -17,10 +17,14 @@ btnAdd.addEventListener('click', function onAddButtonClicked(event) {
 
   const tr = document.createElement('tr')
   tr.innerHTML = `
-        <th scope="row">${id}</th>
-        <td><input type="text" class="item-name" name="itemName-${id}" required></td>
-        <td><input type="number" class="item-num" min="1" max="5" name="itemNum-${id}" value="1" required></td>
-      `
+    <tr>
+      <th scope="row">${id}</th>
+      <td><input type="text" class="award-name" name="awardNames[]" required></td>
+      <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]" value="1"
+          required>
+      </td>
+    </tr>
+  `
   award.appendChild(tr)
 })
 

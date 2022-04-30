@@ -41,8 +41,8 @@
   font-weight: 900;
 }
 
-.item-name,
-.item-num {
+.award-name,
+.award-amount {
   width: 100%;
 }
 

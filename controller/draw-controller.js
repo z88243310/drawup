@@ -23,13 +23,14 @@ const drawController = {
       // 取得 media and comments
       let media = await Media.findOne({
         where: { userId: id },
-        include: [Comment, Condition],
+        include: [Comment, Condition, Award],
         order: [['updated_at', 'DESC']],
         nest: true
       })
       media = media?.toJSON()
 
       res.render('comments', {
+        awards: media?.Awards,
         condition: media?.Condition,
         comments: media?.Comments,
         media

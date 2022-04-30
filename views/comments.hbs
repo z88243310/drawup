@@ -2,7 +2,9 @@
 <!-- 貼文縮圖 -->
 <div class="show-form position-relative">
   <form action="/draw/post" class="position-absolute post-form text-center">
-    <i class="to-post-page fas fa-angle-left {{#if isAuthenticated}}{{else}}d-none{{/if}}"></i>
+    <i class="to-post-page fas fa-angle-left 
+      {{#if isAuthenticated}}{{else}}d-none{{/if}}">
+    </i>
   </form>
   <div class="img mx-auto mb-2" {{#if media.imageUrl}}
     style="background-image:url({{media.imageUrl}});background-size: 100%;"
@@ -26,13 +28,13 @@
 {{/if}}
 <!-- 設定條件 -->
 <legend>設定抽獎條件</legend>
-<div class="text-end {{#if isAuthenticated}}{{else}}d-none{{/if}}">
+<div class="text-end {{#if media.id}}{{else}}d-none{{/if}}">
   <span>留言取得時間</span>
   <i class="reload-page fas fa-redo"></i>
 </div>
 <div class="mb-3 position-relative">
   <span
-    class="position-absolute end-0 {{#if isAuthenticated}}{{else}}d-none{{/if}}">{{adjustDateYearAhead media.updatedAt}}</span>
+    class="position-absolute end-0 {{#if media.id}}{{else}}d-none{{/if}}">{{adjustDateYearAhead media.updatedAt}}</span>
   <label for="repeatAmount" class="form-label">重複留言個數</label>
   <input type="number" id="repeatAmount" class="form-control" placeholder="1-20" name="repeatAmount"
     value="{{#if condition.repeatAmount}}{{condition.repeatAmount}}{{else}}1{{/if}}" min="1"

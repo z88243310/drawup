@@ -45,8 +45,6 @@ reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
   const form = target.closest('form')
   form.action = '/draw?_method=put'
   form.method = 'post'
-  console.log(form)
-
   form.submit()
 })
 

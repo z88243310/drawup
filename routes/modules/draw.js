@@ -13,8 +13,8 @@ router.post('/', authenticated, drawController.postMediaComment)
 router.get('/post', authenticated, drawController.getMedia)
 // post condition to action
 router.post('/action', authenticated, drawController.postCondition)
-// put comment
-router.put('/', authenticated, drawController.putComment)
+// put media
+router.put('/', authenticated, drawController.putMedia)
 
 
 module.exports = router

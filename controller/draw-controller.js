@@ -45,7 +45,7 @@ const drawController = {
     // 取得 media，若無直接返回
     const mediaJson = req.body?.mediaJson
     if (!mediaJson) return res.redirect('back')
-    media = JSON.parse(mediaJson)
+    let media = JSON.parse(mediaJson)
 
     const mediaUrl = media.media_url
     const thumbnailUrl = media.thumbnail_url
@@ -94,7 +94,7 @@ const drawController = {
         const comments = commentResponse?.data?.comments?.data
 
         comments?.forEach(comment => {
-          comment.rawId = cryptr.encrypt(comment.id)
+          comment.rawId = comment.id
           comment.mediaId = mediaNew.id
           comment.userId = id
           delete comment.id
@@ -183,14 +183,40 @@ const drawController = {
       next(e)
     }
   },
-  putComment: async (req, res, next) => {
-    console.log('okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+  putMedia: async (req, res, next) => {
     const { id, accessToken } = getUser(req)
 
     try {
       const { repeatAmount, tagAmount, deadline, mediaId } = req.body
       const userId = getUser(req).id
-      console.log(req.body)
+
+      // 找出 media rawId
+      const mediaOne = await Media.findOne({ where: { id: mediaId } })
+      const mediaRawId = mediaOne.rawId
+
+      // 取得 指定 media
+      const mediaResponse = await axios.get(`
+      https://graph.facebook.com/v12.0/${mediaRawId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`)
+
+      // 確認類型，回傳正確圖片 url
+      const mediaUrl = mediaResponse.media_url
+      const thumbnailUrl = mediaResponse.thumbnail_url
+      const mediaType = mediaResponse.media_type
+      const imageUrl = mediaType === 'VIDEO' ? thumbnailUrl : mediaUrl
+
+      const { caption, timestamp, permalink } = mediaResponse
+      const likeCount = mediaResponse.like_count
+      const commentsCount = mediaResponse.comments_count
+
+
+      // 更新 media 資料
+      await mediaOne.update({
+        userId: id,
+        rawId: mediaRawId,
+        mediaType, likeCount, commentsCount, caption,
+        timestamp, permalink, imageUrl,
+        updatedAt: new Date()
+      })
 
       // 搜尋或新增一筆 Condition
       const [conditionNew, conditionCreated] = await Condition.findOrCreate({
@@ -203,13 +229,10 @@ const drawController = {
       // 如果有搜尋到則更新 Condition 資料
       if (!conditionCreated) {
         await conditionNew.update({
-          repeatAmount, tagAmount, deadline, mediaId, userId
+          repeatAmount, tagAmount, deadline, mediaId, userId,
+          updatedAt: new Date()
         })
       }
-
-      // 找出 media rawId
-      const mediaOne = await Media.findOne({ where: { id: mediaId } })
-      const mediaRawId = mediaOne.rawId
 
       // 刪除 comments from DB
       await Comment.destroy({ where: { userId: id } })
@@ -223,7 +246,7 @@ const drawController = {
       // write comments to db
       if (comments) {
         comments.forEach(comment => {
-          comment.rawId = cryptr.encrypt(comment.id)
+          comment.rawId = comment.id
           comment.mediaId = mediaId
           comment.userId = id
           delete comment.id

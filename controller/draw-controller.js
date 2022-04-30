@@ -197,17 +197,17 @@ const drawController = {
       // 取得 指定 media
       const mediaResponse = await axios.get(`
       https://graph.facebook.com/v12.0/${mediaRawId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`)
+      const media = mediaResponse?.data
 
       // 確認類型，回傳正確圖片 url
-      const mediaUrl = mediaResponse.media_url
-      const thumbnailUrl = mediaResponse.thumbnail_url
-      const mediaType = mediaResponse.media_type
+      const mediaUrl = media.media_url
+      const thumbnailUrl = media.thumbnail_url
+      const mediaType = media.media_type
       const imageUrl = mediaType === 'VIDEO' ? thumbnailUrl : mediaUrl
 
-      const { caption, timestamp, permalink } = mediaResponse
-      const likeCount = mediaResponse.like_count
-      const commentsCount = mediaResponse.comments_count
-
+      const { caption, timestamp, permalink } = media
+      const likeCount = media.like_count
+      const commentsCount = media.comments_count
 
       // 更新 media 資料
       await mediaOne.update({

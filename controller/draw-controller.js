@@ -36,6 +36,7 @@ const drawController = {
         comments: media?.Comments,
         media
       })
+
     } catch (e) {
       next(e)
     }
@@ -44,6 +45,7 @@ const drawController = {
   postMediaComment: async (req, res, next) => {
     try {
       await drawServices.refreshMediaAndComment(req)
+
       res.redirect('/draw')
 
     } catch (e) {
@@ -95,6 +97,7 @@ const drawController = {
       }
       const paging = mediaResponse?.data?.media?.paging
       return res.render('total-media', { ig, media, paging, igSelected })
+
     } catch (e) {
       next(e)
     }

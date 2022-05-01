@@ -56,27 +56,26 @@ const drawServices = {
       }
     })
 
-    // 如果有搜尋到則更新 Media 資料
-    if (!mediaCreated) {
-      await mediaNew.update({
+    await Promise.all([
+      // 如果有搜尋到則更新 Media 資料
+      !mediaCreated ? mediaNew.update({
         userId,
         rawId: mediaRawId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
         updatedAt: new Date()
-      })
-    }
-
-    // write comments to db
-    if (comments) {
-      comments.forEach(comment => {
-        comment.rawId = comment.id
-        comment.mediaId = mediaNew.id
-        comment.userId = userId
-        delete comment.id
-      })
-      await Comment.bulkCreate(comments)
-    }
+      }) : '',
+      // write comments to db
+      comments ? Comment.bulkCreate(
+        comments.map(comment => {
+          comment.rawId = comment.id
+          comment.mediaId = mediaNew.id
+          comment.userId = userId
+          delete comment.id
+          return comment
+        })
+      ) : ''
+    ])
   },
   setConditionAndAward: async (req) => {
     // get user data
@@ -94,16 +93,15 @@ const drawServices = {
       }
     })
 
-    // 如果有搜尋到則更新 Condition 資料
-    if (!conditionCreated) {
-      await conditionNew.update({
+    await Promise.all([
+      // 如果有搜尋到則更新 Condition 資料
+      !conditionCreated ? conditionNew.update({
         repeatAmount, tagAmount, deadline, mediaId, userId,
         updatedAt: new Date()
-      })
-    }
-
-    // 刪除 award from DB
-    await Award.destroy({ where: { userId, mediaId } })
+      }) : '',
+      // 刪除 award from DB
+      Award.destroy({ where: { userId, mediaId } })
+    ])
 
     // 處理 awards
     if (awardNames) {

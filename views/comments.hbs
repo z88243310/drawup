@@ -17,6 +17,7 @@
   {{#if media.id}}
     <form action="/draw/action" method="post">
       <fieldset>
+        <input type="hidden" name="mediaEncryptId" value="{{media.rawId}}">
         <input type="hidden" name="mediaId" value="{{media.id}}">
   {{else}}
     <form action="/draw/post" method="get">

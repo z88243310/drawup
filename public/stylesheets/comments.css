@@ -41,8 +41,8 @@
   font-weight: 900;
 }
 
-.item-name,
-.item-num {
+.award-name,
+.award-amount {
   width: 100%;
 }
 
@@ -72,4 +72,25 @@ legend {
 thead,
 tbody {
   color: #032f38;
+}
+
+/* 刷新留言 */
+.fa-redo{
+  color: #16a5ad;
+}
+.fa-redo:hover{
+  color: #0d7281;
+}
+
+/* 選擇貼文 */
+.post-form{
+  top:-30px;
+}
+.fa-angle-left {
+  font-size: 30px;
+  color: #16a5ad;
+}
+
+.fa-angle-left:hover {
+  color: #0d7281;
 }

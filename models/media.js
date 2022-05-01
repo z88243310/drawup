@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Media.belongsTo(models.User, { foreignKey: 'userId' })
       Media.hasMany(models.Comment, { foreignKey: 'mediaId' })
+      Media.hasOne(models.Condition, { foreignKey: 'mediaId' })
+      Media.hasMany(models.Award, { foreignKey: 'mediaId' })
     }
   }
   Media.init({
@@ -23,12 +25,14 @@ module.exports = (sequelize, DataTypes) => {
     timestamp: DataTypes.DATE,
     likeCount: DataTypes.INTEGER,
     commentsCount: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER
+    userId: DataTypes.INTEGER,
+    updatedAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Media',
     tableName: 'Media',
-    underscored: true
+    underscored: true,
+    timestamps: false
   });
   return Media;
 };

@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="stylesheets/comments.css">
 <!-- 貼文縮圖 -->
-<div class="show-form">
+<div class="show-form position-relative">
+  <form action="/draw/post" class="position-absolute post-form text-center">
+    <i class="to-post-page fas fa-angle-left 
+      {{#if isAuthenticated}}{{else}}d-none{{/if}}">
+    </i>
+  </form>
   <div class="img mx-auto mb-2" {{#if media.imageUrl}}
     style="background-image:url({{media.imageUrl}});background-size: 100%;"
     {{else}}style="background-image:url(/img/question.png);background-size: 60%,60%;background-repeat: no-repeat;"
@@ -9,9 +14,10 @@
 </div>
 <!-- 有認證且有留言，即可抽籤 -->
 {{#if isAuthenticated}}
-  {{#if comments}}
+  {{#if media.id}}
     <form action="/draw/action" method="post">
       <fieldset>
+        <input type="hidden" name="mediaId" value="{{media.id}}">
   {{else}}
     <form action="/draw/post" method="get">
       <fieldset disabled>
@@ -22,20 +28,29 @@
 {{/if}}
 <!-- 設定條件 -->
 <legend>設定抽獎條件</legend>
-<div class="mb-3">
-  <label for="repeat" class="form-label">重複留言個數</label>
-  <input type="number" id="repeat" class="form-control" placeholder="1-20" name="repeat"
-    value="{{#if repeat}}{{repeat}}{{else}}1{{/if}}" min="1" max="20" required>
+<div class="text-end {{#if media.id}}{{else}}d-none{{/if}}">
+  <span>留言取得時間</span>
+  <i class="reload-page fas fa-redo"></i>
+</div>
+<div class="mb-3 position-relative">
+  <span
+    class="position-absolute end-0 {{#if media.id}}{{else}}d-none{{/if}}">{{adjustDateYearAhead media.updatedAt}}</span>
+  <label for="repeatAmount" class="form-label">重複留言個數</label>
+  <input type="number" id="repeatAmount" class="form-control" placeholder="1-20" name="repeatAmount"
+    value="{{#if condition.repeatAmount}}{{condition.repeatAmount}}{{else}}1{{/if}}" min="1"
+    max="20" required>
 </div>
 <div class="mb-3">
-  <label for="tag" class="form-label">標記人數</label>
-  <input type="number" id="tag" class="form-control" placeholder="0-10" name="tag"
-    value="{{#if tag}}{{tag}}{{else}}0{{/if}}" min="0" max="10" required>
+  <label for="tagAmount" class="form-label">標記人數</label>
+  <input type="number" id="tagAmount" class="form-control" placeholder="0-10" name="tagAmount"
+    value="{{#if condition.tagAmount}}{{condition.tagAmount}}{{else}}0{{/if}}" min="0" max="10"
+    required>
 </div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
-  <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="date"
-    value="{{date}}" required>
+  <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="deadline"
+    value="{{#if condition.deadline}}{{formatDate condition.deadline}}{{else}}{{now}}{{/if}}"
+    required>
 </div>
 <!-- 設定獎項 -->
 <legend>設定獎項</legend>
@@ -48,12 +63,26 @@
     </tr>
   </thead>
   <tbody id="award">
-    <tr>
-      <th scope="row">1</th>
-      <td><input type="text" class="item-name" name="itemName-1" required></td>
-      <td><input type="number" class="item-num" min="1" max="5" name="itemNum-1" value="1" required>
-      </td>
-    </tr>
+    {{#if awards}}
+      {{#each awards}}
+        <tr>
+          <th scope="row">{{increment @index}}</th>
+          <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
+              required></td>
+          <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
+              value="{{this.amount}}" required>
+          </td>
+        </tr>
+      {{/each}}
+    {{else}}
+      <tr>
+        <th scope="row">1</th>
+        <td><input type="text" class="award-name" name="awardNames[]" value="" required></td>
+        <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
+            value="1" required>
+        </td>
+      </tr>
+    {{/if}}
   </tbody>
 </table>
 <button type="button" id="btn-add" class="btn btn-secondary d-inline-block"><span>+</span></button>
@@ -62,7 +91,7 @@
 </fieldset>
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
-  {{#if comments}}
+  {{#if media.id}}
     <button type="submit" class="btn-draw btn mt-4 mb-5 mx-auto"
       onclick="return confirm(`進入抽獎頁面`)">準備抽獎</button>
   {{else}}
@@ -98,7 +127,8 @@
           data-placement="top" title="{{this.text}}">{{this.text}} </td>
         <td style="min-width:50px">{{this.tagCount}}</td>
         <td class="text-nowrap text-truncate" style="max-width:75px;" data-toggle="tooltip"
-          data-placement="top" title="{{adjustDate this.timestamp}}">{{adjustDate this.timestamp}}
+          data-placement="top" title="{{adjustDate this.timestamp}}">
+          {{adjustDate this.timestamp}}
         </td>
       </tr>
     {{/each}}

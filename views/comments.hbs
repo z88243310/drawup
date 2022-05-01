@@ -34,7 +34,7 @@
 </div>
 <div class="mb-3 position-relative">
   <span
-    class="position-absolute end-0 {{#if media.id}}{{else}}d-none{{/if}}">{{adjustDateYearAhead media.updatedAt}}</span>
+    class="position-absolute end-0 {{#if media.id}}{{else}}d-none{{/if}}">{{adjustDate media.updatedAt}}</span>
   <label for="repeatAmount" class="form-label">重複留言個數</label>
   <input type="number" id="repeatAmount" class="form-control" placeholder="1-20" name="repeatAmount"
     value="{{#if condition.repeatAmount}}{{condition.repeatAmount}}{{else}}1{{/if}}" min="1"
@@ -128,7 +128,7 @@
         <td style="min-width:50px">{{this.tagCount}}</td>
         <td class="text-nowrap text-truncate" style="max-width:75px;" data-toggle="tooltip"
           data-placement="top" title="{{adjustDate this.timestamp}}">
-          {{adjustDate this.timestamp}}
+          {{relativeTime this.timestamp}}
         </td>
       </tr>
     {{/each}}

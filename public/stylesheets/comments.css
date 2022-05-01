@@ -75,10 +75,11 @@ tbody {
 }
 
 /* 刷新留言 */
-.fa-redo{
+.reload-page{
+  /* font-size: 15px; */
   color: #16a5ad;
 }
-.fa-redo:hover{
+.reload-page:hover{
   color: #0d7281;
 }
 

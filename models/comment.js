@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamp: DataTypes.DATE,
     username: DataTypes.STRING,
     rawId: DataTypes.TEXT,
-    userId: DataTypes.INTEGER,
     mediaId: DataTypes.INTEGER,
   }, {
     sequelize,

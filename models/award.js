@@ -11,14 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Award.belongsTo(models.User, { foreignKey: 'userId' })
       Award.belongsTo(models.Media, { foreignKey: 'mediaId' })
     }
   }
   Award.init({
     name: DataTypes.STRING,
     amount: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER,
     mediaId: DataTypes.INTEGER
   }, {
     sequelize,

@@ -17,6 +17,7 @@
   {{#if media.id}}
     <form action="/draw/action" method="post">
       <fieldset>
+        <input type="hidden" name="mediaEncryptId" value="{{media.rawId}}">
         <input type="hidden" name="mediaId" value="{{media.id}}">
   {{else}}
     <form action="/draw/post" method="get">
@@ -34,7 +35,7 @@
 </div>
 <div class="mb-3 position-relative">
   <span
-    class="position-absolute end-0 {{#if media.id}}{{else}}d-none{{/if}}">{{adjustDateYearAhead media.updatedAt}}</span>
+    class="position-absolute end-0 {{#if media.id}}{{else}}d-none{{/if}}">{{adjustDate media.updatedAt}}</span>
   <label for="repeatAmount" class="form-label">重複留言個數</label>
   <input type="number" id="repeatAmount" class="form-control" placeholder="1-20" name="repeatAmount"
     value="{{#if condition.repeatAmount}}{{condition.repeatAmount}}{{else}}1{{/if}}" min="1"
@@ -121,14 +122,15 @@
     {{#each comments}}
       <tr>
         <th scope="row">{{increment @index}}</th>
-        <td class="text-nowrap text-truncate" style="max-width:75px;" data-toggle="tooltip"
-          data-placement="top" title="{{this.username}}">{{this.username}}</td>
-        <td class="text-nowrap text-truncate" style="max-width:100px;" data-toggle="tooltip"
+        <td class="col-2 text-nowrap text-truncate" style="max-width:80px" data-toggle="tooltip"
+          data-placement="top" title="{{this.username}}">{{this.username}}
+        </td>
+        <td class="col-6 text-nowrap text-truncate" style="max-width:100px;" data-toggle="tooltip"
           data-placement="top" title="{{this.text}}">{{this.text}} </td>
-        <td style="min-width:50px">{{this.tagCount}}</td>
-        <td class="text-nowrap text-truncate" style="max-width:75px;" data-toggle="tooltip"
-          data-placement="top" title="{{adjustDate this.timestamp}}">
-          {{adjustDate this.timestamp}}
+        <td class="col-2" style="min-width:50px">{{this.tagCount}}</td>
+        <td class="col-2 text-nowrap text-truncate" style="min-width:50px;max-width:80x;"
+          data-toggle="tooltip" data-placement="top" title="{{adjustDate this.timestamp}}">
+          {{relativeTime this.timestamp}}
         </td>
       </tr>
     {{/each}}

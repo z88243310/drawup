@@ -6,6 +6,11 @@ const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
 const dayjs = require('dayjs') // 載入 dayjs 套件
+const relativeTime = require('dayjs/plugin/relativeTime')
+require('dayjs/locale/zh-tw')
+dayjs.locale('zh-tw')
+dayjs.extend(relativeTime)
+
 
 module.exports = {
   // 取得當年年份作為 currentYear 的屬性值，並導出
@@ -29,8 +34,8 @@ module.exports = {
     }
   },
   // 取得當年年份作為 currentYear 的屬性值，並導出
-  adjustDate: date => dayjs(date).format('MM-DD-YYYY HH:mm'),
-  adjustDateYearAhead: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
+  adjustDate: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
+  relativeTime: date => dayjs(date).fromNow(true),
   formatDate: date => dayjs(date).format('YYYY-MM-DD'),
   now: () => {
     const now = new Date()

@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Condition.belongsTo(models.User, { foreignKey: 'userId' })
       Condition.belongsTo(models.Media, { foreignKey: 'mediaId' })
     }
   }
@@ -19,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     repeatAmount: DataTypes.INTEGER,
     tagAmount: DataTypes.INTEGER,
     deadline: DataTypes.DATE,
-    userId: DataTypes.INTEGER,
     mediaId: DataTypes.INTEGER
   }, {
     sequelize,

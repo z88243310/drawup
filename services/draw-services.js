@@ -26,9 +26,8 @@ const drawServices = {
       ${apiURL}${mediaRawId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
 
     // request api and delete comments from db 
-    const [mediaResponse, commentResponse, _] = await Promise.all([
-      axios.get(mediaAPI), axios.get(commentAPI),
-      Comment.destroy({ where: { userId } })
+    const [mediaResponse, commentResponse] = await Promise.all([
+      axios.get(mediaAPI), axios.get(commentAPI)
     ])
 
     // get data from response
@@ -65,42 +64,55 @@ const drawServices = {
         timestamp, permalink, imageUrl,
         updatedAt: new Date()
       }) : '',
-      // write comments to db
-      comments ? Comment.bulkCreate(
+      Comment.destroy({ where: { mediaId: mediaNew.id } })
+    ])
+
+    // write comments to db
+    if (comments) {
+      // 標記規則，可包含 英數._，結尾需有空格，可接續其他文字
+      const RegExp = /^[a-z\d\.\_]+\s\w*/
+      await Comment.bulkCreate(
         comments.map(comment => {
-          comment.rawId = comment.id
-          comment.mediaId = mediaNew.id
-          comment.userId = userId
+          // 計算 tag 數量
+          const texts = comment.text.split('@');
+          const tagAmount = texts.reduce((accumulator, text) => {
+            const wordMatched = text?.match(RegExp)
+            return wordMatched !== null ? accumulator += 1 : accumulator
+          }, 0)
+
+          Object.assign(comment, {
+            rawId: comment.id, tagAmount: tagAmount, mediaId: mediaNew.id
+          })
           delete comment.id
+
           return comment
         })
-      ) : ''
-    ])
+      )
+    }
   },
   setConditionAndAward: async (req) => {
     // get user data
-    const user = getUser(req)
-    const userId = user.id
+    const userId = getUser(req)?.id
 
     // get parameter
     const { repeatAmount, tagAmount, deadline, mediaId, awardNames, awardAmounts } = req.body
 
     // 搜尋或新增一筆 Condition
     const [conditionNew, conditionCreated] = await Condition.findOrCreate({
-      where: { userId, mediaId },
+      where: { mediaId },
+      include: [Media],
       defaults: {
-        repeatAmount, tagAmount, deadline, mediaId, userId
+        repeatAmount, tagAmount, deadline, mediaId
       }
     })
 
     await Promise.all([
       // 如果有搜尋到則更新 Condition 資料
       !conditionCreated ? conditionNew.update({
-        repeatAmount, tagAmount, deadline, mediaId, userId,
-        updatedAt: new Date()
+        repeatAmount, tagAmount, deadline, mediaId
       }) : '',
       // 刪除 award from DB
-      Award.destroy({ where: { userId, mediaId } })
+      Award.destroy({ where: { mediaId } })
     ])
 
     // 處理 awards
@@ -108,7 +120,7 @@ const drawServices = {
       const awards = awardNames.map((_, index) => {
         const name = awardNames[index]
         const amount = awardAmounts[index]
-        return { name, amount, mediaId, userId }
+        return { name, amount, mediaId }
       })
       await Award.bulkCreate(awards)
     }

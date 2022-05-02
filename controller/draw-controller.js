@@ -27,8 +27,10 @@ const drawController = {
         order: [['updated_at', 'DESC']],
         nest: true
       })
-      media = media?.toJSON()
-      media.rawId = cryptr.encrypt(media.rawId)
+      if (media) {
+        media = media.toJSON()
+        media.rawId = cryptr.encrypt(media.rawId)
+      }
 
       res.render('comments', {
         awards: media?.Awards,

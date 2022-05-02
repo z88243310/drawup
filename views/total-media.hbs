@@ -20,7 +20,6 @@
     <div class="col-12 mt-3">
       <form action="/draw" method="post" class="card shadow-sm" style="height:100px">
         <!-- input -->
-        <input type="hidden" name="mediaJson" value="{{toJson this}}">
         <input type="hidden" name="mediaEncryptId" value="{{this.id}}">
         <button class="btn-img">
           <div class="img-container" {{#ifCond this.media_type 'VIDEO' }}

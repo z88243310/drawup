@@ -69,12 +69,13 @@ const drawServices = {
 
     // write comments to db
     if (comments) {
-      // 標記規則，可包含 英數._，結尾需有空格，可接續其他文字
-      const RegExp = /^[a-z\d\.\_]+\s\w*/
+      // 標記規則，可包含 英數._
+      const RegExp = /^@\w[\w\.]*/
+
       await Comment.bulkCreate(
         comments.map(comment => {
           // 計算 tag 數量
-          const texts = comment.text.split('@');
+          const texts = comment.text.split(' ');
           const tagAmount = texts.reduce((accumulator, text) => {
             const wordMatched = text?.match(RegExp)
             return wordMatched !== null ? accumulator += 1 : accumulator

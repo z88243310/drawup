@@ -7,6 +7,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     await queryInterface.addColumn('Awards', 'user_id', {
+      allowNull: false,
       type: Sequelize.INTEGER
     })
   }

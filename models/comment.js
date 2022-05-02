@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     text: DataTypes.STRING,
     timestamp: DataTypes.DATE,
     username: DataTypes.STRING,
+    tagAmount: DataTypes.INTEGER,
     rawId: DataTypes.TEXT,
     mediaId: DataTypes.INTEGER,
   }, {

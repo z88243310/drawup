@@ -86,9 +86,6 @@ const drawServices = {
     }
   },
   setConditionAndAward: async (req) => {
-    // get user data
-    const userId = getUser(req)?.id
-
     // get parameter
     const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames, awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)

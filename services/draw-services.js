@@ -44,6 +44,9 @@ const drawServices = {
     const likeCount = media.like_count
     const commentsCount = media.comments_count
 
+    // 標記規則，可包含 英數._
+    const RegExp = /^@\w[\w\.]*/
+
     // 搜尋或新增一筆 Media
     const [mediaNew, mediaCreated] = await Media.findOrCreate({
       where: { id: mediaId },
@@ -64,15 +67,8 @@ const drawServices = {
         timestamp, permalink, imageUrl,
         updatedAt: new Date()
       }) : '',
-      Comment.destroy({ where: { mediaId } })
-    ])
-
-    // write comments to db
-    if (comments) {
-      // 標記規則，可包含 英數._
-      const RegExp = /^@\w[\w\.]*/
-
-      await Comment.bulkCreate(
+      // write comments to db
+      comments ? Comment.bulkCreate(
         comments.map(comment => {
           // 計算 tag 數量
           const texts = comment.text.split(' ');
@@ -82,8 +78,11 @@ const drawServices = {
           }, 0)
           return { ...comment, tagAmount, mediaId }
         })
-      )
-    }
+        , {
+          updateOnDuplicate: ['text', 'timestamp', 'username', 'tagAmount', 'mediaId']
+        }
+      ) : ''
+    ])
   },
   setConditionAndAward: async (req) => {
     // get parameter

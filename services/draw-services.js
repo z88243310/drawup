@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment, Condition, Award } = require('../models')
+const { Media, Comment, Condition, Award, Account } = require('../models')
 
 const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
@@ -125,6 +125,42 @@ const drawServices = {
       })
       await Award.bulkCreate(awards)
     }
+  },
+  getAccountAndMedia: async (req, res) => {
+    const user = getUser(req)
+    const userId = user.id
+    const accessToken = user.accessToken
+
+    let accounts
+    const { accountSelected, before, after } = req.query
+    const accountAPI = `https://graph.facebook.com/v12.0/me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`
+
+    // 已選擇項目 
+    if (accountSelected) {
+      accounts = await Account.findAll({ where: { userId }, raw: true })
+      accounts.forEach(account => {
+        account.encryptId = cryptr.encrypt(account.rawId)
+      })
+    }
+    // 未選擇項目|初次進入頁面
+    else {
+      let accountResponse = await axios.get(accountAPI)
+      accounts = accountResponse?.data?.data
+
+      accounts = accounts.map(account => {
+        const ig = account.instagram_business_account
+        const rawId = ig.id
+        const name = ig.name
+        const encryptId = cryptr.encrypt(rawId)
+        delete account.id
+        return { rawId, userId, name, encryptId }
+      })
+
+      await Account.destroy({ where: { userId } })
+      await Account.bulkCreate(accounts)
+    }
+
+    res.render('total-media', { accounts, accountSelected })
   }
 }
 

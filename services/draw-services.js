@@ -130,21 +130,40 @@ const drawServices = {
     const user = getUser(req)
     const userId = user.id
     const accessToken = user.accessToken
-
-    let accounts
     const { accountSelected, before, after } = req.query
-    const accountAPI = `https://graph.facebook.com/v12.0/me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`
+    let accounts, media, paging
+
+    const mediaQuery = 'media' + (after ? `.after(${after})` : '')
+      + (before ? `.before(${before})` : '') + '.limit(4)'
+    const accountSelectedDecrypt = accountSelected
+      ? cryptr.decrypt(accountSelected) + ''
+      : ''
+
+    // API url
+    const accountAPI = `${apiURL}me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`
+    const mediaAPI = `${apiURL}${accountSelectedDecrypt}?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink}&access_token=${accessToken}`
+    console.log(mediaAPI)
 
     // 已選擇項目 
     if (accountSelected) {
-      accounts = await Account.findAll({ where: { userId }, raw: true })
-      accounts.forEach(account => {
+      const [accountsNew, mediaResponse] = await Promise.all([
+        Account.findAll({ where: { userId }, raw: true }),
+        axios.get(mediaAPI)
+      ])
+      
+      media = mediaResponse?.data?.media?.data
+      paging = mediaResponse?.data?.media?.paging
+
+      media.forEach(medium => medium.id = cryptr.encrypt(medium.id))
+
+      accounts = accountsNew.map(account => {
         account.encryptId = cryptr.encrypt(account.rawId)
+        return account
       })
     }
     // 未選擇項目|初次進入頁面
     else {
-      let accountResponse = await axios.get(accountAPI)
+      const accountResponse = await axios.get(accountAPI)
       accounts = accountResponse?.data?.data
 
       accounts = accounts.map(account => {
@@ -160,7 +179,7 @@ const drawServices = {
       await Account.bulkCreate(accounts)
     }
 
-    res.render('total-media', { accounts, accountSelected })
+    return { accounts, media, paging, accountSelected }
   }
 }
 

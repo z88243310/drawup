@@ -126,7 +126,7 @@ const drawServices = {
       await Award.bulkCreate(awards)
     }
   },
-  getAccountAndMedia: async (req, res) => {
+  getAccountAndMedia: async (req) => {
     const user = getUser(req)
     const userId = user.id
     const accessToken = user.accessToken
@@ -142,22 +142,25 @@ const drawServices = {
     // API url
     const accountAPI = `${apiURL}me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`
     const mediaAPI = `${apiURL}${accountSelectedDecrypt}?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink}&access_token=${accessToken}`
-    console.log(mediaAPI)
 
     // 已選擇項目 
     if (accountSelected) {
       const [accountsNew, mediaResponse] = await Promise.all([
-        Account.findAll({ where: { userId }, raw: true }),
+        Account.findAll({
+          where: { userId },
+          order: [['id', 'DESC']],
+          raw: true
+        }),
         axios.get(mediaAPI)
       ])
-      
+
       media = mediaResponse?.data?.media?.data
       paging = mediaResponse?.data?.media?.paging
 
       media.forEach(medium => medium.id = cryptr.encrypt(medium.id))
 
       accounts = accountsNew.map(account => {
-        account.encryptId = cryptr.encrypt(account.rawId)
+        account.encryptId = cryptr.encrypt(account.id)
         return account
       })
     }
@@ -168,15 +171,17 @@ const drawServices = {
 
       accounts = accounts.map(account => {
         const ig = account.instagram_business_account
-        const rawId = ig.id
-        const name = ig.name
-        const encryptId = cryptr.encrypt(rawId)
-        delete account.id
-        return { rawId, userId, name, encryptId }
+        return {
+          id: ig.id,
+          userId,
+          name: ig.name,
+          encryptId: cryptr.encrypt(ig.id)
+        }
       })
 
-      await Account.destroy({ where: { userId } })
-      await Account.bulkCreate(accounts)
+      await Account.bulkCreate(accounts, {
+        updateOnDuplicate: ['name', 'userId']
+      })
     }
 
     return { accounts, media, paging, accountSelected }

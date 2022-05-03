@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Account.init({
     name: DataTypes.STRING,
-    rawId: DataTypes.STRING,
     userId: DataTypes.INTEGER,
     updatedAt: DataTypes.DATE,
   }, {

@@ -2,17 +2,16 @@
 <h1>選擇貼文</h1>
 <div class="row mx-auto mt-2" style="max-width: 750px;">
   <form class="ig-form" onchange="submit()" method="get">
-    <input type="hidden" name="igJson" value="{{toJson ig}}">
-    <select name="igSelected" id="ig-select" class="shadow-sm">
+    <select name="accountSelected" id="ig-select" class="shadow-sm">
       <option value="">請選擇IG帳號</option>
-      {{#each ig}}
-        <option value="{{this.instagram_business_account.id}}" {{#AESCompare
-          this.instagram_business_account.id ../igSelected}}selected{{/AESCompare}}>
-          {{this.instagram_business_account.name}}
+      {{#each accounts}}
+        <option value="{{this.encryptId}}" {{#AESCompare this.encryptId
+          ../accountSelected}}selected{{/AESCompare}}>
+          {{this.name}}
         </option>
       {{/each}}
     </select>
-    {{#unless ig}} <a
+    {{#unless accounts}} <a
         href="https://www.facebook.com/business/help/898752960195806">請確認FB粉絲專頁是否已連結IG商業帳號</a>
     {{/unless}}
   </form>
@@ -51,11 +50,11 @@
   <div class="mx-auto text-center mt-4 mb-4">
     {{#if paging.previous}}
       <a class="btn-page btn mr-4"
-        href="/draw/post?before={{paging.cursors.before}}&igSelected={{igSelected}}&igJson={{toJson ig}}">上一頁</a>
+        href="/draw/post?before={{paging.cursors.before}}&accountSelected={{accountSelected}}">上一頁</a>
     {{/if}}
     {{#if paging.next}}
       <a class="btn-page btn"
-        href="/draw/post?after={{paging.cursors.after}}&igSelected={{igSelected}}&igJson={{toJson ig}}">下一頁</a>
+        href="/draw/post?after={{paging.cursors.after}}&accountSelected={{accountSelected}}">下一頁</a>
     {{/if}}
   </div>
 {{/if}}

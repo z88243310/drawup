@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.hasMany(models.Media, { foreignKey: 'userId' })
+      User.hasMany(models.Account, { foreignKey: 'userId' })
     }
   }
   User.init(

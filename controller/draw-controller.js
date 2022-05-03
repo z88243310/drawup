@@ -8,7 +8,7 @@ const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment, Condition, Award } = require('../models')
+const { Media, Comment, Condition, Award, Account } = require('../models')
 
 const drawServices = require('../services/draw-services')
 
@@ -29,7 +29,7 @@ const drawController = {
       })
       if (media) {
         media = media.toJSON()
-        media.rawId = cryptr.encrypt(media.rawId)
+        media.id = cryptr.encrypt(media.id)
       }
 
       res.render('comments', {
@@ -56,54 +56,16 @@ const drawController = {
   },
   // get all media
   getMedia: async (req, res, next) => {
-    const { accessToken } = getUser(req)
-    const igSelected = req.query?.igSelected
-
-    // 如果已經有 ig 資料就直接取出
-    let igJson = req.query?.igJson
-    ig = igJson ? JSON.parse(igJson) : ''
-
-    const before = req.query?.before
-    const after = req.query?.after
-
     try {
-      // 如果沒有 ig 資料，就請求 instagram_business_account id
-      const nameResponse = !ig
-        ? await axios.get(`
-      https://graph.facebook.com/v12.0/me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`)
-        : ''
-      ig = nameResponse ? nameResponse?.data?.data : ig
-      // encrypt id
-      if (typeof ig === 'object' && nameResponse) {
-        ig.forEach(content => {
-          content.instagram_business_account.id = cryptr.encrypt(content.instagram_business_account.id)
-        })
-      }
+      const { accounts, media, paging, accountSelected } = await drawServices.getAccountAndMedia(req, res)
 
-      // 取出 指定 ig id 的 media
-      const mediaQuery = 'media' + (after ? `.after(${after})` : '') + (before ? `.before(${before})` : '') + '.limit(4)'
-      let mediaResponse = igSelected
-        ? await axios.get(
-          `https://graph.facebook.com/v12.0/${cryptr.decrypt(
-            igSelected
-          )}/?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink}&access_token=${accessToken}`
-        )
-        : ''
-
-      const media = mediaResponse?.data?.media?.data
-      // encrypt id
-      if (typeof media === 'object') {
-        media.forEach(content => {
-          content.id = cryptr.encrypt(content.id)
-        })
-      }
-      const paging = mediaResponse?.data?.media?.paging
-      return res.render('total-media', { ig, media, paging, igSelected })
+      res.render('total-media', { accounts, media, paging, accountSelected })
 
     } catch (e) {
       next(e)
     }
   },
+  // set condition and award
   postCondition: async (req, res, next) => {
     try {
       await drawServices.setConditionAndAward(req)
@@ -114,6 +76,7 @@ const drawController = {
       next(e)
     }
   },
+  // refresh media & comment and set condition & award
   putMedia: async (req, res, next) => {
     try {
       await Promise.all([

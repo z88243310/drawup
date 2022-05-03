@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment, Condition, Award } = require('../models')
+const { Media, Comment, Condition, Award, Account } = require('../models')
 
 const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
@@ -17,13 +17,13 @@ const drawServices = {
 
     // get parameter
     const { mediaEncryptId } = req.body
-    const mediaRawId = cryptr.decrypt(mediaEncryptId)
+    const mediaId = cryptr.decrypt(mediaEncryptId)
 
     // API url
     const mediaAPI = `
-      ${apiURL}${mediaRawId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
     const commentAPI = `
-      ${apiURL}${mediaRawId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
 
     // request api and delete comments from db 
     const [mediaResponse, commentResponse] = await Promise.all([
@@ -44,12 +44,15 @@ const drawServices = {
     const likeCount = media.like_count
     const commentsCount = media.comments_count
 
+    // 標記規則，可包含 英數._
+    const RegExp = /^@\w[\w\.]*/
+
     // 搜尋或新增一筆 Media
     const [mediaNew, mediaCreated] = await Media.findOrCreate({
-      where: { rawId: mediaRawId },
+      where: { id: mediaId },
       defaults: {
+        id: mediaId,
         userId,
-        rawId: mediaRawId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl
       }
@@ -58,21 +61,14 @@ const drawServices = {
     await Promise.all([
       // 如果有搜尋到則更新 Media 資料
       !mediaCreated ? mediaNew.update({
+        id: mediaId,
         userId,
-        rawId: mediaRawId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
         updatedAt: new Date()
       }) : '',
-      Comment.destroy({ where: { mediaId: mediaNew.id } })
-    ])
-
-    // write comments to db
-    if (comments) {
-      // 標記規則，可包含 英數._
-      const RegExp = /^@\w[\w\.]*/
-
-      await Comment.bulkCreate(
+      // write comments to db
+      comments ? Comment.bulkCreate(
         comments.map(comment => {
           // 計算 tag 數量
           const texts = comment.text.split(' ');
@@ -80,23 +76,18 @@ const drawServices = {
             const wordMatched = text?.match(RegExp)
             return wordMatched !== null ? accumulator += 1 : accumulator
           }, 0)
-
-          Object.assign(comment, {
-            rawId: comment.id, tagAmount: tagAmount, mediaId: mediaNew.id
-          })
-          delete comment.id
-
-          return comment
+          return { ...comment, tagAmount, mediaId }
         })
-      )
-    }
+        , {
+          updateOnDuplicate: ['text', 'timestamp', 'username', 'tagAmount', 'mediaId']
+        }
+      ) : ''
+    ])
   },
   setConditionAndAward: async (req) => {
-    // get user data
-    const userId = getUser(req)?.id
-
     // get parameter
-    const { repeatAmount, tagAmount, deadline, mediaId, awardNames, awardAmounts } = req.body
+    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames, awardAmounts } = req.body
+    const mediaId = cryptr.decrypt(mediaEncryptId)
 
     // 搜尋或新增一筆 Condition
     const [conditionNew, conditionCreated] = await Condition.findOrCreate({
@@ -125,6 +116,66 @@ const drawServices = {
       })
       await Award.bulkCreate(awards)
     }
+  },
+  getAccountAndMedia: async (req) => {
+    const user = getUser(req)
+    const userId = user.id
+    const accessToken = user.accessToken
+    const { accountSelected, before, after } = req.query
+    let accounts, media, paging
+
+    const mediaQuery = 'media' + (after ? `.after(${after})` : '')
+      + (before ? `.before(${before})` : '') + '.limit(4)'
+    const accountSelectedDecrypt = accountSelected
+      ? cryptr.decrypt(accountSelected) + ''
+      : ''
+
+    // API url
+    const accountAPI = `${apiURL}me/accounts/?fields=instagram_business_account{name}&access_token=${accessToken}`
+    const mediaAPI = `${apiURL}${accountSelectedDecrypt}?fields=${mediaQuery}{like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink}&access_token=${accessToken}`
+
+    // 已選擇項目 
+    if (accountSelected) {
+      const [accountsNew, mediaResponse] = await Promise.all([
+        Account.findAll({
+          where: { userId },
+          order: [['id', 'DESC']],
+          raw: true
+        }),
+        axios.get(mediaAPI)
+      ])
+
+      media = mediaResponse?.data?.media?.data
+      paging = mediaResponse?.data?.media?.paging
+
+      media.forEach(medium => medium.id = cryptr.encrypt(medium.id))
+
+      accounts = accountsNew.map(account => {
+        account.encryptId = cryptr.encrypt(account.id)
+        return account
+      })
+    }
+    // 未選擇項目|初次進入頁面
+    else {
+      const accountResponse = await axios.get(accountAPI)
+      accounts = accountResponse?.data?.data
+
+      accounts = accounts.map(account => {
+        const ig = account.instagram_business_account
+        return {
+          id: ig.id,
+          userId,
+          name: ig.name,
+          encryptId: cryptr.encrypt(ig.id)
+        }
+      })
+
+      await Account.bulkCreate(accounts, {
+        updateOnDuplicate: ['name', 'userId']
+      })
+    }
+
+    return { accounts, media, paging, accountSelected }
   }
 }
 

@@ -29,7 +29,7 @@ const drawController = {
       })
       if (media) {
         media = media.toJSON()
-        media.rawId = cryptr.encrypt(media.rawId)
+        media.id = cryptr.encrypt(media.id)
       }
 
       res.render('comments', {

@@ -17,13 +17,13 @@ const drawServices = {
 
     // get parameter
     const { mediaEncryptId } = req.body
-    const mediaRawId = cryptr.decrypt(mediaEncryptId)
+    const mediaId = cryptr.decrypt(mediaEncryptId)
 
     // API url
     const mediaAPI = `
-      ${apiURL}${mediaRawId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
     const commentAPI = `
-      ${apiURL}${mediaRawId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
 
     // request api and delete comments from db 
     const [mediaResponse, commentResponse] = await Promise.all([
@@ -46,10 +46,10 @@ const drawServices = {
 
     // 搜尋或新增一筆 Media
     const [mediaNew, mediaCreated] = await Media.findOrCreate({
-      where: { rawId: mediaRawId },
+      where: { id: mediaId },
       defaults: {
+        id: mediaId,
         userId,
-        rawId: mediaRawId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl
       }
@@ -58,13 +58,13 @@ const drawServices = {
     await Promise.all([
       // 如果有搜尋到則更新 Media 資料
       !mediaCreated ? mediaNew.update({
+        id: mediaId,
         userId,
-        rawId: mediaRawId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
         updatedAt: new Date()
       }) : '',
-      Comment.destroy({ where: { mediaId: mediaNew.id } })
+      Comment.destroy({ where: { mediaId } })
     ])
 
     // write comments to db
@@ -80,13 +80,7 @@ const drawServices = {
             const wordMatched = text?.match(RegExp)
             return wordMatched !== null ? accumulator += 1 : accumulator
           }, 0)
-
-          Object.assign(comment, {
-            rawId: comment.id, tagAmount: tagAmount, mediaId: mediaNew.id
-          })
-          delete comment.id
-
-          return comment
+          return { ...comment, tagAmount, mediaId }
         })
       )
     }
@@ -96,7 +90,8 @@ const drawServices = {
     const userId = getUser(req)?.id
 
     // get parameter
-    const { repeatAmount, tagAmount, deadline, mediaId, awardNames, awardAmounts } = req.body
+    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames, awardAmounts } = req.body
+    const mediaId = cryptr.decrypt(mediaEncryptId)
 
     // 搜尋或新增一筆 Condition
     const [conditionNew, conditionCreated] = await Condition.findOrCreate({

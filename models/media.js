@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
   }
   Media.init({
     caption: DataTypes.STRING,
-    rawId: DataTypes.STRING,
     mediaType: DataTypes.STRING,
     imageUrl: DataTypes.STRING,
     permalink: DataTypes.STRING,

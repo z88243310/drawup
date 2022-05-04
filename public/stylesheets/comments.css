@@ -111,3 +111,16 @@ tbody {
 .award-draggable:hover{
   background-color: rgb(240, 240, 240);
 }
+
+.award-draggable:active {
+  opacity: 0.6;
+  background-color: #0d7281;
+}
+
+.award-dragging,
+.award-draggable:active{
+  opacity: 0.6;
+  box-shadow: 5px 5px 3px rgb(136, 136, 136);
+  background-color: #0d7281;
+  color: #032f38;
+}

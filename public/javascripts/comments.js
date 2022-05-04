@@ -65,6 +65,59 @@ reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
 })
 
 // award dragger
-console.log(awardContainer)
-console.log(awardDraggables)
+awardDraggables.forEach(awardDraggable => {
+  awardDraggable.addEventListener('dragstart', e => {
+    awardDraggable.classList.add('award-dragging')
+  })
 
+  awardDraggable.addEventListener('dragend', () => {
+    awardDraggable.classList.remove('award-dragging')
+    calculateAwardNumber()
+  })
+
+  awardContainer.addEventListener('dragover', e => {
+    e.preventDefault()
+
+    // 以鼠標現在的 Y 座標，取德最靠近的元素
+    const afterElement = getDragAfterElement(awardContainer, e.clientY)
+    const awardDragging = document.querySelector('.award-dragging')
+
+    // 如果沒有回傳 afterElement 就放到 awardContainer 最下面
+    if (afterElement === undefined) {
+      awardContainer.appendChild(awardDragging)
+
+      // 否則就把 awardDragging 放在 afterElement 前一個位置
+    } else {
+      awardContainer.insertBefore(awardDragging, afterElement)
+    }
+
+  })
+})
+
+function getDragAfterElement(awardContainer, y) {
+  const draggableElements = [...awardContainer.querySelectorAll('.award-draggable:not(.award-dragging')]
+
+  return draggableElements.reduce((closest, draggableElement) => {
+    const box = draggableElement.getBoundingClientRect()
+
+    // 正在拖曳的物件鼠標位置與非拖曳的物件中心點的偏差值
+    const offset = y - box.top - box.height / 2
+
+    // 如果誤差值比先前更接近，回傳最靠近的元素
+    if (offset < 0 && offset > closest.offset) {
+      return { offset, element: draggableElement }
+    }
+    // 否則維持不變 
+    else { return closest }
+
+  }, { offset: Number.NEGATIVE_INFINITY }).element
+}
+
+function calculateAwardNumber() {
+  const awardDraggables = document.querySelectorAll('.award-draggable')
+
+  awardDraggables.forEach((awardDraggable, index) => {
+    awardDraggable.children[0].innerText = index + 1
+    console.log(awardDraggable.children[0].innerText)
+  })
+}

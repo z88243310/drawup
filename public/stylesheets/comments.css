@@ -1,3 +1,4 @@
+/* 貼文圖示 */
 .img {
   width: 120px;
   height: 120px;
@@ -5,6 +6,44 @@
   border-radius: 30px;
 }
 
+/* 大標題字體 */
+legend {
+  font-weight: 600;
+}
+
+/* 留言相關 */
+.comment-count {
+  width: 60%;
+  font-weight: 900;
+}
+
+thead,
+tbody {
+  color: #032f38;
+}
+
+/* 刷新留言 */
+.reload-page{
+  color: #16a5ad;
+}
+.reload-page:hover{
+  color: #0d7281;
+}
+
+/* 左上角選擇貼文 */
+.post-form{
+  top:-30px;
+}
+.fa-angle-left {
+  font-size: 30px;
+  color: #16a5ad;
+}
+
+.fa-angle-left:hover {
+  color: #0d7281;
+}
+
+/* 授權、選擇貼文、準備抽獎 按鈕設定 */
 .btn-draw,
 .btn-post,
 .btn-auth {
@@ -13,34 +52,34 @@
   max-width: 350px;
   font-weight: 600;
 }
+
 .btn-draw,
 .btn-post {
   background-color: #16a5ad;
   border: 1px solid #16a5ad;
   color: white;
 }
+
 .btn-draw:hover,
 .btn-post:hover {
   background-color: #0d7281;
   border: 1px solid #0d7281;
   color: white;
 }
+
 .btn-auth {
   background-color: #fd7b13;
   border: 1px solid #fd7b13;
   color: white;
 }
+
 .btn-auth:hover {
   background-color: #fd943e;
   border: 1px solid #fd943e;
   color: white;
 }
 
-.count {
-  width: 60%;
-  font-weight: 900;
-}
-
+/* awards 相關*/
 .award-name,
 .award-amount {
   width: 100%;
@@ -65,33 +104,10 @@
   transform: translate(-50%, -2px);
 }
 
-legend {
-  font-weight: 600;
+.award-draggable{
+  cursor:move;
 }
 
-thead,
-tbody {
-  color: #032f38;
-}
-
-/* 刷新留言 */
-.reload-page{
-  /* font-size: 15px; */
-  color: #16a5ad;
-}
-.reload-page:hover{
-  color: #0d7281;
-}
-
-/* 選擇貼文 */
-.post-form{
-  top:-30px;
-}
-.fa-angle-left {
-  font-size: 30px;
-  color: #16a5ad;
-}
-
-.fa-angle-left:hover {
-  color: #0d7281;
+.award-draggable:hover{
+  background-color: rgb(240, 240, 240);
 }

@@ -1,4 +1,6 @@
 const awardContainer = document.querySelector('#award-container')
+const awardDraggables = document.querySelectorAll('.award-draggable')
+
 const btnAdd = document.querySelector('#btn-add')
 const btnDelete = document.querySelector('#btn-delete')
 
@@ -32,7 +34,6 @@ function createAward() {
   awardContainer.appendChild(tr)
 }
 
-
 // 增加獎項
 btnAdd.addEventListener('click', function onAddButtonClicked(event) {
   event.preventDefault()
@@ -63,7 +64,7 @@ reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
   form.submit()
 })
 
-
-
-
 // award dragger
+console.log(awardContainer)
+console.log(awardDraggables)
+

@@ -1,3 +1,4 @@
+/* 貼文圖示 */
 .img {
   width: 120px;
   height: 120px;
@@ -5,68 +6,15 @@
   border-radius: 30px;
 }
 
-.btn-draw,
-.btn-post,
-.btn-auth {
-  width: 60%;
-  display: block;
-  max-width: 350px;
-  font-weight: 600;
-}
-.btn-draw,
-.btn-post {
-  background-color: #16a5ad;
-  border: 1px solid #16a5ad;
-  color: white;
-}
-.btn-draw:hover,
-.btn-post:hover {
-  background-color: #0d7281;
-  border: 1px solid #0d7281;
-  color: white;
-}
-.btn-auth {
-  background-color: #fd7b13;
-  border: 1px solid #fd7b13;
-  color: white;
-}
-.btn-auth:hover {
-  background-color: #fd943e;
-  border: 1px solid #fd943e;
-  color: white;
-}
-
-.count {
-  width: 60%;
-  font-weight: 900;
-}
-
-.award-name,
-.award-amount {
-  width: 100%;
-}
-
-#btn-add,
-#btn-delete {
-  font-size: 20px;
-  width: 30px;
-  height: 30px;
-  margin: 0px;
-  padding: 0px;
-  font-weight: 900;
-  position: relative;
-}
-
-#btn-add span,
-#btn-delete span {
-  position: absolute;
-  left: 50%;
-  top: 0px;
-  transform: translate(-50%, -2px);
-}
-
+/* 大標題字體 */
 legend {
   font-weight: 600;
+}
+
+/* 留言相關 */
+.comment-count {
+  width: 60%;
+  font-weight: 900;
 }
 
 thead,
@@ -76,14 +24,14 @@ tbody {
 
 /* 刷新留言 */
 .reload-page{
-  /* font-size: 15px; */
   color: #16a5ad;
 }
 .reload-page:hover{
   color: #0d7281;
+  cursor: pointer;
 }
 
-/* 選擇貼文 */
+/* 左上角選擇貼文 */
 .post-form{
   top:-30px;
 }
@@ -94,4 +42,96 @@ tbody {
 
 .fa-angle-left:hover {
   color: #0d7281;
+  cursor: pointer;
+}
+
+/* 授權、選擇貼文、準備抽獎 按鈕設定 */
+.btn-draw,
+.btn-post,
+.btn-auth {
+  width: 60%;
+  display: block;
+  max-width: 350px;
+  font-weight: 600;
+}
+
+.btn-draw,
+.btn-post {
+  background-color: #16a5ad;
+  border: 1px solid #16a5ad;
+  color: white;
+}
+
+.btn-draw:hover,
+.btn-post:hover {
+  background-color: #0d7281;
+  border: 1px solid #0d7281;
+  color: white;
+}
+
+.btn-auth {
+  background-color: #fd7b13;
+  border: 1px solid #fd7b13;
+  color: white;
+}
+
+.btn-auth:hover {
+  background-color: #fd943e;
+  border: 1px solid #fd943e;
+  color: white;
+}
+
+/* awards 相關*/
+.award-name {
+  width: 100%;
+}
+.award-amount {
+  width:85%;
+}
+
+
+.delete-btn {
+  font-size: 18px;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  color: #16a5ad;
+  cursor: pointer;
+}
+
+#add-btn {
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  margin: 0px;
+  padding: 0px;
+  font-weight: 900;
+  position: relative;
+}
+
+#add-btn span {
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  transform: translate(-50%, -2px);
+}
+
+.award-draggable{
+  cursor:move;
+}
+
+.award-draggable:hover{
+  background-color: rgb(240, 240, 240);
+}
+
+.award-draggable:active {
+  opacity: 0.3;
+  background-color: #0d7281;
+}
+
+.award-dragging{
+  opacity: 0.6;
+  box-shadow: 5px 5px 3px rgb(136, 136, 136);
+  background-color: #0d7281;
+  color: #032f38;
 }

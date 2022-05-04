@@ -29,8 +29,7 @@
 <!-- 設定條件 -->
 <legend>設定抽獎條件</legend>
 <div class="text-end {{#if media.id}}{{else}}d-none{{/if}}">
-  <span>儲存設定．刷新留言</span>
-  <i class="reload-page fas fa-redo"></i>
+  <span>儲存設定．刷新留言 <i class="reload-page fas fa-redo"></i></span>
 </div>
 <div class="mb-3 position-relative">
   <span
@@ -57,37 +56,27 @@
 <table class="table align-middle">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">#</th>
-      <th class="col-7" scope="col">項目</th>
-      <th class="col-3" scope="col">得獎人數</th>
+      <th class="col-2" scope="col">#</th>
+      <th class="col-7" scope="col" style="min-width:220px;">項目</th>
+      <th class="col-2" scope="col" style="min-width:75px;">名額</th>
+      <th style="min-width:15px;max-width:50px;text-align:center"></th>
     </tr>
   </thead>
-  <tbody id="award">
-    {{#if awards}}
-      {{#each awards}}
-        <tr>
-          <th scope="row">{{increment @index}}</th>
-          <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
-              required></td>
-          <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
-              value="{{this.amount}}" required>
-          </td>
-        </tr>
-      {{/each}}
-    {{else}}
-      <tr>
-        <th scope="row">1</th>
-        <td><input type="text" class="award-name" name="awardNames[]" value="" required></td>
+  <tbody id="award-container">
+    {{#each awards}}
+      <tr class="award-draggable" draggable="true">
+        <th scope="row">{{increment @index}}</th>
+        <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
+            required></td>
         <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
-            value="1" required>
+            value="{{this.amount}}" required>
         </td>
+        <td style="text-align:center"><i class="delete-btn fas fa-times"></i></td>
       </tr>
-    {{/if}}
+    {{/each}}
   </tbody>
 </table>
-<button type="button" id="btn-add" class="btn btn-secondary d-inline-block"><span>+</span></button>
-<button type="button" id="btn-delete"
-  class="btn btn-secondary d-inline-block"><span>–</span></button>
+<button type="button" id="add-btn" class="btn btn-secondary d-inline-block"><span>+</span></button>
 </fieldset>
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
@@ -104,7 +93,7 @@
 {{/if}}
 </form>
 <!-- 留言表 -->
-<h5 class="count">共有 {{#if comments}}{{comments.length}}
+<h5 class="comment-count">共有 {{#if comments}}{{comments.length}}
   {{else}}0{{/if}} 則留言
 </h5>
 <table class=" table align-middle table-hover">
@@ -126,7 +115,7 @@
         </td>
         <td class="col-6 text-nowrap text-truncate" style="max-width:100px;" data-toggle="tooltip"
           data-placement="top" title="{{this.text}}">{{this.text}} </td>
-        <td class="col-2" style="min-width:50px">{{this.tagAmount}}</td>
+        <td class="col-2" style="min-width:50px;padding-left:15px">{{this.tagAmount}}</td>
         <td class="col-2 text-nowrap text-truncate" style="min-width:50px;max-width:80x;"
           data-toggle="tooltip" data-placement="top" title="{{adjustDate this.timestamp}}">
           {{relativeTime this.timestamp}}

@@ -62,27 +62,17 @@
       <th class="col-3" scope="col">得獎人數</th>
     </tr>
   </thead>
-  <tbody id="award">
-    {{#if awards}}
-      {{#each awards}}
-        <tr>
-          <th scope="row">{{increment @index}}</th>
-          <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
-              required></td>
-          <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
-              value="{{this.amount}}" required>
-          </td>
-        </tr>
-      {{/each}}
-    {{else}}
-      <tr>
-        <th scope="row">1</th>
-        <td><input type="text" class="award-name" name="awardNames[]" value="" required></td>
+  <tbody id="award-container">
+    {{#each awards}}
+      <tr class="award-draggable" draggable="true">
+        <th scope="row">{{increment @index}}</th>
+        <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
+            required></td>
         <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
-            value="1" required>
+            value="{{this.amount}}" required>
         </td>
       </tr>
-    {{/if}}
+    {{/each}}
   </tbody>
 </table>
 <button type="button" id="btn-add" class="btn btn-secondary d-inline-block"><span>+</span></button>

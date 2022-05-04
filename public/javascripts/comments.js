@@ -1,4 +1,4 @@
-const award = document.querySelector('#award')
+const awardContainer = document.querySelector('#award-container')
 const btnAdd = document.querySelector('#btn-add')
 const btnDelete = document.querySelector('#btn-delete')
 
@@ -8,16 +8,20 @@ const postIcon = document.querySelector('.to-post-page')
 // 刷新按鈕
 const reloadIcon = document.querySelector('.reload-page')
 
+// 未登入時製造一個空獎項
+if (!awardContainer.children.length) createAward()
 
-// 增加獎項
-btnAdd.addEventListener('click', function onAddButtonClicked(event) {
-  event.preventDefault()
-  const children = award?.lastElementChild?.children
+// 創造一個獎項
+function createAward() {
+  const children = awardContainer?.lastElementChild?.children
   const id = children ? Number(children[0].innerText) + 1 : 1
+
+  const length = awardContainer?.children?.length
+  if (length >= 10) return
 
   const tr = document.createElement('tr')
   tr.innerHTML = `
-    <tr>
+    <tr class="award-draggable" draggable="true">
       <th scope="row">${id}</th>
       <td><input type="text" class="award-name" name="awardNames[]" required></td>
       <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]" value="1"
@@ -25,14 +29,21 @@ btnAdd.addEventListener('click', function onAddButtonClicked(event) {
       </td>
     </tr>
   `
-  award.appendChild(tr)
+  awardContainer.appendChild(tr)
+}
+
+
+// 增加獎項
+btnAdd.addEventListener('click', function onAddButtonClicked(event) {
+  event.preventDefault()
+  createAward()
 })
 
 // 減少獎項
 btnDelete.addEventListener('click', function onAddButtonClicked(event) {
   event.preventDefault()
-  const length = award?.children?.length
-  const lastChild = award?.lastElementChild
+  const length = awardContainer?.children?.length
+  const lastChild = awardContainer?.lastElementChild
   if (length > 1) lastChild.remove()
 })
 
@@ -53,3 +64,6 @@ reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
 })
 
 
+
+
+// award dragger

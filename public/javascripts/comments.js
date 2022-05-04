@@ -1,8 +1,9 @@
 const awardContainer = document.querySelector('#award-container')
 const awardDraggables = document.querySelectorAll('.award-draggable')
 
-const btnAdd = document.querySelector('#btn-add')
-const btnDelete = document.querySelector('#btn-delete')
+// 增刪獎項按鈕
+const addBtn = document.querySelector('#add-btn')
+const deleteBtns = document.querySelectorAll('.delete-btn')
 
 // 貼文按鈕
 const postIcon = document.querySelector('.to-post-page')
@@ -25,39 +26,39 @@ function createAward() {
   tr.innerHTML = `
       <th scope="row">${id}</th>
       <td><input type="text" class="award-name" name="awardNames[]" required></td>
-      <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]" value="1"
-          required>
+      <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]" value="1" required>
       </td>
+      <td style="text-align:center"><i class="delete-btn fas fa-times"</i></td>
   `
   tr.classList.add('award-draggable')
   tr.draggable = true
 
   awardContainer.appendChild(tr)
   draggableEventFunction(awardContainer, tr)
+
+  const deleteBtn = tr.querySelector('.delete-btn')
+  deleteBtnEventFunction(deleteBtn)
 }
 
 // 增加獎項
-btnAdd.addEventListener('click', function onAddButtonClicked(event) {
+addBtn.addEventListener('click', function onAddButtonClicked(event) {
   event.preventDefault()
   createAward()
 })
 
 // 減少獎項
-btnDelete.addEventListener('click', function onAddButtonClicked(event) {
-  event.preventDefault()
-  const length = awardContainer?.children?.length
-  const lastChild = awardContainer?.lastElementChild
-  if (length > 1) lastChild.remove()
+deleteBtns.forEach(deleteBtn => {
+  deleteBtnEventFunction(deleteBtn)
 })
 
-// 貼文按鈕
+// 選擇貼文按鈕
 postIcon.addEventListener('click', function onPostIconClicked(event) {
   const target = event.target
   const form = target.closest('form')
   form.submit()
 })
 
-// 貼文按鈕
+// 刷新留言按鈕
 reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
   const target = event.target
   const form = target.closest('form')
@@ -71,6 +72,7 @@ awardDraggables.forEach(awardDraggable => {
   draggableEventFunction(awardContainer, awardDraggable)
 })
 
+// 取得拖曳中下方元素
 function getDragAfterElement(awardContainer, y) {
   const draggableElements = [...awardContainer.querySelectorAll('.award-draggable:not(.award-dragging')]
 
@@ -90,22 +92,23 @@ function getDragAfterElement(awardContainer, y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element
 }
 
-function calculateAwardNumber(awardDraggables) {
+// 計算次序
+function calculateAwardNumber() {
+  const awardDraggables = document.querySelectorAll('.award-draggable')
   awardDraggables.forEach((awardDraggable, index) => {
     awardDraggable.children[0].innerText = index + 1
   })
 }
 
+// 拖曳監聽函式
 function draggableEventFunction(awardContainer, awardDraggable) {
   awardDraggable.addEventListener('dragstart', e => {
     awardDraggable.classList.add('award-dragging')
   })
 
   awardDraggable.addEventListener('dragend', () => {
-    const awardDraggables = document.querySelectorAll('.award-draggable')
-
     awardDraggable.classList.remove('award-dragging')
-    calculateAwardNumber(awardDraggables)
+    calculateAwardNumber()
   })
 
   awardContainer.addEventListener('dragover', e => {
@@ -124,5 +127,15 @@ function draggableEventFunction(awardContainer, awardDraggable) {
       awardContainer.insertBefore(awardDragging, afterElement)
     }
 
+  })
+}
+
+// 刪除監聽函式
+function deleteBtnEventFunction(deleteBtn) {
+  deleteBtn.addEventListener('click', function onAddButtonClicked(event) {
+    const parentElement = deleteBtn.closest('tr')
+
+    parentElement.remove()
+    calculateAwardNumber(awardDraggables)
   })
 }

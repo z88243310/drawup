@@ -24,7 +24,11 @@ const drawController = {
       let media = await Media.findOne({
         where: { userId },
         include: [Comment, Condition, Award],
-        order: [['updated_at', 'DESC']],
+        order: [
+          ['updated_at', 'DESC'],
+          [Comment, 'timestamp', 'DESC'],
+          [Award, 'id', 'ASC']
+        ],
         nest: true
       })
       if (media) {

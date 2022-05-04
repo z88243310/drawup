@@ -23,15 +23,17 @@ function createAward() {
 
   const tr = document.createElement('tr')
   tr.innerHTML = `
-    <tr class="award-draggable" draggable="true">
       <th scope="row">${id}</th>
       <td><input type="text" class="award-name" name="awardNames[]" required></td>
       <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]" value="1"
           required>
       </td>
-    </tr>
   `
+  tr.classList.add('award-draggable')
+  tr.draggable = true
+
   awardContainer.appendChild(tr)
+  draggableEventFunction(awardContainer, tr)
 }
 
 // 增加獎項
@@ -66,32 +68,7 @@ reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
 
 // award dragger
 awardDraggables.forEach(awardDraggable => {
-  awardDraggable.addEventListener('dragstart', e => {
-    awardDraggable.classList.add('award-dragging')
-  })
-
-  awardDraggable.addEventListener('dragend', () => {
-    awardDraggable.classList.remove('award-dragging')
-    calculateAwardNumber()
-  })
-
-  awardContainer.addEventListener('dragover', e => {
-    e.preventDefault()
-
-    // 以鼠標現在的 Y 座標，取德最靠近的元素
-    const afterElement = getDragAfterElement(awardContainer, e.clientY)
-    const awardDragging = document.querySelector('.award-dragging')
-
-    // 如果沒有回傳 afterElement 就放到 awardContainer 最下面
-    if (afterElement === undefined) {
-      awardContainer.appendChild(awardDragging)
-
-      // 否則就把 awardDragging 放在 afterElement 前一個位置
-    } else {
-      awardContainer.insertBefore(awardDragging, afterElement)
-    }
-
-  })
+  draggableEventFunction(awardContainer, awardDraggable)
 })
 
 function getDragAfterElement(awardContainer, y) {
@@ -113,11 +90,39 @@ function getDragAfterElement(awardContainer, y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element
 }
 
-function calculateAwardNumber() {
-  const awardDraggables = document.querySelectorAll('.award-draggable')
-
+function calculateAwardNumber(awardDraggables) {
   awardDraggables.forEach((awardDraggable, index) => {
     awardDraggable.children[0].innerText = index + 1
-    console.log(awardDraggable.children[0].innerText)
+  })
+}
+
+function draggableEventFunction(awardContainer, awardDraggable) {
+  awardDraggable.addEventListener('dragstart', e => {
+    awardDraggable.classList.add('award-dragging')
+  })
+
+  awardDraggable.addEventListener('dragend', () => {
+    const awardDraggables = document.querySelectorAll('.award-draggable')
+
+    awardDraggable.classList.remove('award-dragging')
+    calculateAwardNumber(awardDraggables)
+  })
+
+  awardContainer.addEventListener('dragover', e => {
+    e.preventDefault()
+
+    // 以鼠標現在的 Y 座標，取德最靠近的元素
+    const afterElement = getDragAfterElement(awardContainer, e.clientY)
+    const awardDragging = document.querySelector('.award-dragging')
+
+    // 如果沒有回傳 afterElement 就放到 awardContainer 最下面
+    if (afterElement === undefined) {
+      awardContainer.appendChild(awardDragging)
+
+      // 否則就把 awardDragging 放在 afterElement 前一個位置
+    } else {
+      awardContainer.insertBefore(awardDragging, afterElement)
+    }
+
   })
 }

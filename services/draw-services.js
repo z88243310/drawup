@@ -52,7 +52,6 @@ const drawServices = {
     // 標記規則，可包含 英數._
     const RegExp = /^@\w[\w\.]*/
 
-
     await Promise.all([
       // 寫入或更新 Media 資料
       Media.bulkCreate([{

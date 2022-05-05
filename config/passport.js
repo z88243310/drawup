@@ -19,22 +19,24 @@ module.exports = app => {
         profileFields: ['email', 'displayName'],
         passReqToCallback: true
       },
-      (req, accessToken, refreshToken, profile, done) => {
-        const { name, email } = profile._json
-        console.log(profile._json)
-        User.findOne({ where: { email } }).then(user => {
-          // 已註冊
-          if (user) {
-            return user
-              .update({ accessToken })
-              .then(user => done(null, user, req.flash('success_messages', '授權成功')))
-              .catch(error => done(error, false))
-          }
-          // 未註冊
-          return User.create({ name, email, accessToken })
-            .then(user => done(null, user, req.flash('success_messages', '授權成功')))
-            .catch(error => done(error, false))
-        })
+      async (req, accessToken, refreshToken, profile, done) => {
+        try {
+          const { id, name, email } = profile._json
+
+          // 寫入或更新使用者資料
+          let user = await User.bulkCreate(
+            [{ id, name, email, accessToken }],
+            {
+              updateOnDuplicate: ['name', 'email', 'accessToken'],
+            }
+          )
+          user = user[0].toJSON()
+
+          done(null, user, req.flash('success_messages', '授權成功'))
+        }
+        catch (e) {
+          done(e, false)
+        }
       }
     )
   )

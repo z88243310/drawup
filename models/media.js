@@ -20,13 +20,11 @@ module.exports = (sequelize, DataTypes) => {
     likeCount: DataTypes.INTEGER,
     commentsCount: DataTypes.INTEGER,
     AccountId: DataTypes.STRING,
-    updatedAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Media',
     tableName: 'Media',
     underscored: true,
-    timestamps: false
   });
   return Media;
 };

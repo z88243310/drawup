@@ -12,13 +12,11 @@ module.exports = (sequelize, DataTypes) => {
   Account.init({
     name: DataTypes.STRING,
     userId: DataTypes.STRING,
-    updatedAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Account',
     tableName: 'Accounts',
     underscored: true,
-    timestamps: false
   });
   return Account;
 };

@@ -120,19 +120,43 @@ tbody {
   cursor:grab;
   cursor: -webkit-grabbing;
 }
+.award-draggable {
+  -webkit-appearance: none;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -o-user-select:none;
+  user-select:none;
+}
 
 .award-draggable:hover {
   background-color: rgb(240, 240, 240);
 }
 
-.ghost{
+.ghost {
   opacity: 0.6;
   color: #fff;
   background-color: #0d7281;
+  -webkit-appearance: none;
   box-shadow: 5px 5px 3px rgb(136, 136, 136);
+  -webkit-box-shadow: 5px 5px 3px rgb(136, 136, 136);
 }
 
-
+@media screen and (max-device-width:450px) {
+  .dragging {
+    visibility: hidden;
+  }
+  .award-draggable:has(.tag-move:active) {
+    opacity: 0.6;
+    color: #fff;
+    background-color: #0d7281;
+    -webkit-appearance: none;
+    box-shadow: 5px 5px 3px rgb(136, 136, 136) !important;
+    -webkit-box-shadow: 5px 5px 3px rgb(136, 136, 136);
+  }
+  .award-draggable:hover{
+    background-color: unset;
+  }
+}
 
 
 

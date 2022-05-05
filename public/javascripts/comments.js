@@ -16,6 +16,7 @@ const sortable = Sortable.create(awardContainer, {
   handle: '.tag-move',
   animation: 100,
   ghostClass: 'ghost',
+  dragClass: 'dragging',
   sort: true,
   onEnd: () => {
     calculateAwardNumber()
@@ -25,7 +26,7 @@ const sortable = Sortable.create(awardContainer, {
 // 計算次序
 function calculateAwardNumber() {
   const awardDraggables = document.querySelectorAll('.award-draggable')
-  console.log(awardDraggables)
+
   awardDraggables.forEach((awardDraggable, index) => {
     awardDraggable.children[0].innerText = index + 1
   })
@@ -43,9 +44,7 @@ function deleteBtnEventFunction(deleteBtn) {
 
 
 // 未登入時製造一個空獎項
-if (!awardContainer.children.length) {
-  for (let i = 0; i <= 10; i++)  createAward()
-}
+if (!awardContainer.children.length) createAward()
 
 // 創造一個獎項
 function createAward() {

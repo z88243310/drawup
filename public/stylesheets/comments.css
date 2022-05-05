@@ -96,7 +96,6 @@ tbody {
 }
 .delete-btn:hover {
   color: #ad1616;
-  cursor: pointer;
 }
 
 #add-btn {
@@ -155,6 +154,12 @@ tbody {
   }
   .award-draggable:hover{
     background-color: unset;
+  }
+  .delete-btn:hover {
+    color: unset;
+  }
+  .delete-btn:active {
+      color: #ad1616;
   }
 }
 

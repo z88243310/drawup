@@ -6,7 +6,7 @@ const { Media, Comment, Condition, Award, Account, User } = require('../models')
 const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
-const apiURL = 'https://graph.facebook.com/v12.0/'
+const apiURL = 'https://graph.facebook.com/v13.0/'
 
 const drawServices = {
   refreshMediaAndComment: async (req) => {
@@ -177,6 +177,41 @@ const drawServices = {
     }
 
     return { accounts, media, paging, accountSelected }
+  },
+  getAllDataOfMedia: async (req) => {
+    const user = getUser(req)
+    const lastMediaId = user?.lastMediaId
+    const accounts = user?.Accounts
+
+    if (!lastMediaId) return {}
+
+    // 取得 media and comments
+    let media = await Media.findByPk(lastMediaId, {
+      include: [Comment, Condition, Award],
+      order: [
+        ['updated_at', 'DESC'],
+        [Comment, 'timestamp', 'DESC'],
+        [Award, 'id', 'ASC']
+      ],
+      nest: true
+    })
+
+    if (!media) return {}
+
+    // 整理資訊，加密 id
+    media = media.toJSON()
+    media.id = cryptr.encrypt(media.id)
+
+    // 確認媒體歸屬是否為該使用者
+    const accountMatched = accounts.some(account => account.id === media.accountId)
+    if (!accountMatched) throw new Error('貼文取得失敗')
+
+    return {
+      awards: media.Awards,
+      condition: media.Condition,
+      comments: media.Comments,
+      media
+    }
   }
 }
 

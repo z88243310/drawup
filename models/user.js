@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       email: DataTypes.STRING,
-      accessToken: DataTypes.STRING
+      accessToken: DataTypes.STRING,
+      lastMediaId: DataTypes.STRING,
     },
     {
       sequelize,

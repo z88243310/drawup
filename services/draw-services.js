@@ -1,27 +1,30 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment, Condition, Award, Account } = require('../models')
+const { Media, Comment, Condition, Award, Account, User } = require('../models')
 
 const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
 
-const apiURL = 'https://graph.facebook.com/v12.0/'
+const apiURL = 'https://graph.facebook.com/v13.0/'
 
 const drawServices = {
   refreshMediaAndComment: async (req) => {
     // get user data
     const user = getUser(req)
-    const userId = user.id
     const accessToken = user.accessToken
+    const accounts = user.Accounts
 
     // get parameter
     const { mediaEncryptId } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
 
+    // 標記規則，可包含 英數._
+    const RegExp = /^@\w[\w\.]*/
+
     // API url
     const mediaAPI = `
-      ${apiURL}${mediaId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=owner,like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
     const commentAPI = `
       ${apiURL}${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
 
@@ -44,29 +47,26 @@ const drawServices = {
     const likeCount = media.like_count
     const commentsCount = media.comments_count
 
-    // 標記規則，可包含 英數._
-    const RegExp = /^@\w[\w\.]*/
+    const ownerId = media.owner.id
 
-    // 搜尋或新增一筆 Media
-    const [mediaNew, mediaCreated] = await Media.findOrCreate({
-      where: { id: mediaId },
-      defaults: {
-        id: mediaId,
-        userId,
-        mediaType, likeCount, commentsCount, caption,
-        timestamp, permalink, imageUrl
-      }
-    })
+    // 確認媒體歸屬是否為該使用者
+    const accountMatched = accounts.some(account => account.id === ownerId)
+    if (!accountMatched) throw new Error('貼文取得失敗')
 
     await Promise.all([
-      // 如果有搜尋到則更新 Media 資料
-      !mediaCreated ? mediaNew.update({
-        id: mediaId,
-        userId,
+      // 寫入 lastMediaId to User
+      await User.bulkCreate(
+        [{ ...user, lastMediaId: mediaId }],
+        { updateOnDuplicate: ['lastMediaId'] }
+      ),
+      // 寫入或更新 Media 資料
+      Media.bulkCreate([{
+        id: mediaId, accountId: ownerId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
-        updatedAt: new Date()
-      }) : '',
+      }], {
+        updateOnDuplicate: ['accountId', 'ownerId', 'mediaType', 'likeCount', 'commentsCount', 'caption', 'timestamp', 'permalink', 'imageUrl']
+      }),
       // write comments to db
       comments ? Comment.bulkCreate(
         comments.map(comment => {
@@ -170,12 +170,48 @@ const drawServices = {
         }
       })
 
+      // 寫入資料 to Account
       await Account.bulkCreate(accounts, {
         updateOnDuplicate: ['name', 'userId']
       })
     }
 
     return { accounts, media, paging, accountSelected }
+  },
+  getAllDataOfMedia: async (req) => {
+    const user = getUser(req)
+    const lastMediaId = user?.lastMediaId
+    const accounts = user?.Accounts
+
+    if (!lastMediaId) return {}
+
+    // 取得 media and comments
+    let media = await Media.findByPk(lastMediaId, {
+      include: [Comment, Condition, Award],
+      order: [
+        ['updated_at', 'DESC'],
+        [Comment, 'timestamp', 'DESC'],
+        [Award, 'id', 'ASC']
+      ],
+      nest: true
+    })
+
+    if (!media) return {}
+
+    // 整理資訊，加密 id
+    media = media.toJSON()
+    media.id = cryptr.encrypt(media.id)
+
+    // 確認媒體歸屬是否為該使用者
+    const accountMatched = accounts.some(account => account.id === media.accountId)
+    if (!accountMatched) throw new Error('貼文取得失敗')
+
+    return {
+      awards: media.Awards,
+      condition: media.Condition,
+      comments: media.Comments,
+      media
+    }
   }
 }
 

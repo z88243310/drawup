@@ -13,10 +13,14 @@ const drawServices = {
     // get user data
     const user = getUser(req)
     const accessToken = user.accessToken
+    const accounts = user.Accounts
 
     // get parameter
     const { mediaEncryptId } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
+
+    // 標記規則，可包含 英數._
+    const RegExp = /^@\w[\w\.]*/
 
     // API url
     const mediaAPI = `
@@ -33,9 +37,6 @@ const drawServices = {
     const media = mediaResponse?.data
     const comments = commentResponse?.data?.comments?.data
 
-    // 如果未找到 media 則報錯
-    if (!media) throw new Error('貼文取得失敗')
-
     // 確認類型，回傳正確圖片 url
     const mediaUrl = media.media_url
     const thumbnailUrl = media.thumbnail_url
@@ -48,16 +49,15 @@ const drawServices = {
 
     const ownerId = media.owner.id
 
-    // 標記規則，可包含 英數._
-    const RegExp = /^@\w[\w\.]*/
+    // 確認媒體歸屬是否為該使用者
+    const accountMatched = accounts.some(account => account.id === ownerId)
+    if (!accountMatched) throw new Error('貼文取得失敗')
 
     await Promise.all([
       // 寫入 lastMediaId to User
       await User.bulkCreate(
         [{ ...user, lastMediaId: mediaId }],
-        {
-          updateOnDuplicate: ['lastMediaId'],
-        }
+        { updateOnDuplicate: ['lastMediaId'] }
       ),
       // 寫入或更新 Media 資料
       Media.bulkCreate([{
@@ -170,6 +170,7 @@ const drawServices = {
         }
       })
 
+      // 寫入資料 to Account
       await Account.bulkCreate(accounts, {
         updateOnDuplicate: ['name', 'userId']
       })

@@ -3,7 +3,7 @@ const passport = require('passport')
 // 引用 Facebook 登入策略
 const FacebookStrategy = require('passport-facebook').Strategy
 
-const { User } = require('../models')
+const { User, Account } = require('../models')
 module.exports = app => {
   // 初始化 passport 模組
   app.use(passport.initialize())
@@ -44,12 +44,15 @@ module.exports = app => {
   passport.serializeUser((user, done) => {
     done(null, user.id)
   })
-  passport.deserializeUser((id, done) => {
-    User.findByPk(id)
-      .then(user => {
-        user = user.toJSON()
-        done(null, user)
-      })
-      .catch(err => done(err, null))
+  passport.deserializeUser(async (id, done) => {
+    try {
+      let user = await User.findByPk(id, { include: [Account] })
+      user = user.toJSON()
+
+      done(null, user)
+    }
+    catch (e) {
+      done(e, null)
+    }
   })
 }

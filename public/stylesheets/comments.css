@@ -95,7 +95,7 @@ tbody {
   cursor: pointer;
 }
 .delete-btn:hover {
-  color: #16a5ad;
+  color: #ad1616;
   cursor: pointer;
 }
 
@@ -116,22 +116,24 @@ tbody {
   transform: translate(-50%, -2px);
 }
 
-.award-draggable{
-  cursor:move;
+.tag-move {
+  cursor:grab;
+  cursor: -webkit-grabbing;
 }
 
-.award-draggable:hover{
+.award-draggable:hover {
   background-color: rgb(240, 240, 240);
 }
 
-.award-draggable:active {
-  opacity: 0.3;
+.ghost{
+  opacity: 0.6;
+  color: #fff;
   background-color: #0d7281;
+  box-shadow: 5px 5px 3px rgb(136, 136, 136);
 }
 
-.award-dragging{
-  opacity: 0.6;
-  box-shadow: 5px 5px 3px rgb(136, 136, 136);
-  background-color: #0d7281;
-  color: #032f38;
-}
+
+
+
+
+

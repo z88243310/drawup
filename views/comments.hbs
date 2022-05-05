@@ -47,7 +47,8 @@
 </div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
-  <input type="date" id="deadline" class="form-control" placeholder="輸入截止時間" name="deadline"
+  <input type="date" id="deadline" class="form-control" style="cursor:pointer" placeholder="輸入截止時間"
+    name="deadline"
     value="{{#if condition.deadline}}{{formatDate condition.deadline}}{{else}}{{now}}{{/if}}"
     required>
 </div>
@@ -59,13 +60,13 @@
       <th class="col-2" scope="col">#</th>
       <th class="col-7" scope="col" style="min-width:220px;">項目</th>
       <th class="col-2" scope="col" style="min-width:75px;">名額</th>
-      <th style="min-width:15px;max-width:50px;text-align:center"></th>
+      <th style="min-width:20px;max-width:50px;text-align:center"></th>
     </tr>
   </thead>
   <tbody id="award-container">
     {{#each awards}}
-      <tr class="award-draggable" draggable="true">
-        <th scope="row">{{increment @index}}</th>
+      <tr class="award-draggable">
+        <th class="tag-move" scope="row">{{increment @index}}</th>
         <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
             required></td>
         <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
@@ -124,4 +125,5 @@
     {{/each}}
   </tbody>
 </table>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script src="/javascripts/comments.js"></script>

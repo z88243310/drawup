@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     static associate(models) {
       Account.belongsTo(models.User, { foreignKey: 'userId' })
+      Account.hasMany(models.Media, { foreignKey: 'accountId' })
     }
   }
   Account.init({

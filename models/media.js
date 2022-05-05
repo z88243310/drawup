@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Media extends Model {
     static associate(models) {
-      Media.belongsTo(models.User, { foreignKey: 'userId' })
+      Media.belongsTo(models.Account, { foreignKey: 'accountId' })
       Media.hasMany(models.Comment, { foreignKey: 'mediaId' })
       Media.hasOne(models.Condition, { foreignKey: 'mediaId' })
       Media.hasMany(models.Award, { foreignKey: 'mediaId' })
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamp: DataTypes.DATE,
     likeCount: DataTypes.INTEGER,
     commentsCount: DataTypes.INTEGER,
-    userId: DataTypes.INTEGER,
+    AccountId: DataTypes.STRING,
     updatedAt: DataTypes.DATE,
   }, {
     sequelize,

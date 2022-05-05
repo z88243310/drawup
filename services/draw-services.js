@@ -1,7 +1,7 @@
 const axios = require('axios')
 
 const { getUser } = require('../helpers/auth-helpers')
-const { Media, Comment, Condition, Award, Account } = require('../models')
+const { Media, Comment, Condition, Award, Account, User } = require('../models')
 
 const Cryptr = require('cryptr')
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET)
@@ -12,7 +12,6 @@ const drawServices = {
   refreshMediaAndComment: async (req) => {
     // get user data
     const user = getUser(req)
-    const userId = user.id
     const accessToken = user.accessToken
 
     // get parameter
@@ -53,16 +52,21 @@ const drawServices = {
     const RegExp = /^@\w[\w\.]*/
 
     await Promise.all([
+      // 寫入 lastMediaId to User
+      await User.bulkCreate(
+        [{ ...user, lastMediaId: mediaId }],
+        {
+          updateOnDuplicate: ['lastMediaId'],
+        }
+      ),
       // 寫入或更新 Media 資料
       Media.bulkCreate([{
-        id: mediaId,
-        accountId: ownerId,
+        id: mediaId, accountId: ownerId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
       }], {
         updateOnDuplicate: ['accountId', 'ownerId', 'mediaType', 'likeCount', 'commentsCount', 'caption', 'timestamp', 'permalink', 'imageUrl']
-      }
-      ),
+      }),
       // write comments to db
       comments ? Comment.bulkCreate(
         comments.map(comment => {

@@ -21,7 +21,7 @@ const drawServices = {
 
     // API url
     const mediaAPI = `
-      ${apiURL}${mediaId}?fields=like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=owner,like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
     const commentAPI = `
       ${apiURL}${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
 
@@ -34,6 +34,9 @@ const drawServices = {
     const media = mediaResponse?.data
     const comments = commentResponse?.data?.comments?.data
 
+    // 如果未找到 media 則報錯
+    if (!media) throw new Error('貼文取得失敗')
+
     // 確認類型，回傳正確圖片 url
     const mediaUrl = media.media_url
     const thumbnailUrl = media.thumbnail_url
@@ -44,29 +47,23 @@ const drawServices = {
     const likeCount = media.like_count
     const commentsCount = media.comments_count
 
+    const ownerId = media.owner.id
+
     // 標記規則，可包含 英數._
     const RegExp = /^@\w[\w\.]*/
 
-    // 搜尋或新增一筆 Media
-    const [mediaNew, mediaCreated] = await Media.findOrCreate({
-      where: { id: mediaId },
-      defaults: {
-        id: mediaId,
-        userId,
-        mediaType, likeCount, commentsCount, caption,
-        timestamp, permalink, imageUrl
-      }
-    })
 
     await Promise.all([
-      // 如果有搜尋到則更新 Media 資料
-      !mediaCreated ? mediaNew.update({
+      // 寫入或更新 Media 資料
+      Media.bulkCreate([{
         id: mediaId,
-        userId,
+        accountId: ownerId,
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
-        updatedAt: new Date()
-      }) : '',
+      }], {
+        updateOnDuplicate: ['accountId', 'ownerId', 'mediaType', 'likeCount', 'commentsCount', 'caption', 'timestamp', 'permalink', 'imageUrl']
+      }
+      ),
       // write comments to db
       comments ? Comment.bulkCreate(
         comments.map(comment => {

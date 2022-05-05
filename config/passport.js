@@ -21,6 +21,7 @@ module.exports = app => {
       },
       (req, accessToken, refreshToken, profile, done) => {
         const { name, email } = profile._json
+        console.log(profile._json)
         User.findOne({ where: { email } }).then(user => {
           // 已註冊
           if (user) {

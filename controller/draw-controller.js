@@ -16,13 +16,14 @@ const drawController = {
   // show auth page
   showCommentPage: async (req, res, next) => {
     try {
-      const userId = getUser(req)?.id || null
+      const user = getUser(req)
+      const userId = user?.id || null
+      const lastMediaId = user?.lastMediaId || null
 
-      if (!userId) return res.render('comments')
+      if (!lastMediaId) return res.render('comments')
 
       // 取得 media and comments
-      let media = await Media.findOne({
-        where: { userId },
+      let media = await Media.findByPk(lastMediaId, {
         include: [Comment, Condition, Award],
         order: [
           ['updated_at', 'DESC'],

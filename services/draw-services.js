@@ -30,7 +30,7 @@ const drawServices = {
 
     // request api and delete comments from db 
     const [mediaResponse, commentResponse] = await Promise.all([
-      axios.get(mediaAPI), axios.get(commentAPI)
+      axios.get(mediaAPI), axios.get(commentAPI), Comment.destroy({ where: { mediaId } })
     ])
 
     // get data from response
@@ -65,7 +65,7 @@ const drawServices = {
         mediaType, likeCount, commentsCount, caption,
         timestamp, permalink, imageUrl,
       }], {
-        updateOnDuplicate: ['accountId', 'ownerId', 'mediaType', 'likeCount', 'commentsCount', 'caption', 'timestamp', 'permalink', 'imageUrl']
+        updateOnDuplicate: ['accountId', 'ownerId', 'mediaType', 'likeCount', 'commentsCount', 'caption', 'timestamp', 'permalink', 'imageUrl', 'updatedAt']
       }),
       // write comments to db
       comments ? Comment.bulkCreate(
@@ -78,9 +78,6 @@ const drawServices = {
           }, 0)
           return { ...comment, tagAmount, mediaId }
         })
-        , {
-          updateOnDuplicate: ['text', 'timestamp', 'username', 'tagAmount', 'mediaId']
-        }
       ) : ''
     ])
   },

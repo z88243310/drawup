@@ -26,7 +26,7 @@ const drawServices = {
     const mediaAPI = `
       ${apiURL}${mediaId}?fields=owner,like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
     const commentAPI = `
-      ${apiURL}${mediaId}?fields=comments{text,timestamp,username}&access_token=${accessToken}`
+      ${apiURL}${mediaId}?fields=comments{text,timestamp,username,user}&access_token=${accessToken}`
 
     // request api and delete comments from db 
     const [mediaResponse, commentResponse] = await Promise.all([
@@ -69,15 +69,20 @@ const drawServices = {
       }),
       // write comments to db
       comments ? Comment.bulkCreate(
-        comments.map(comment => {
+        comments.reduce((commentSelectedList, comment) => {
+          // 過濾本人留言
+          if (comment?.user?.id === ownerId) return commentSelectedList
+
           // 計算 tag 數量
           const texts = comment.text.split(' ');
           const tagAmount = texts.reduce((accumulator, text) => {
             const wordMatched = text?.match(RegExp)
             return wordMatched !== null ? accumulator += 1 : accumulator
           }, 0)
-          return { ...comment, tagAmount, mediaId }
-        })
+
+          commentSelectedList.push({ ...comment, tagAmount, mediaId })
+          return commentSelectedList
+        }, [])
       ) : ''
     ])
   },

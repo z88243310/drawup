@@ -5,8 +5,8 @@
   width: 45px;
   height: 45px;
   margin: auto;
-  z-index: 999;
-  transform: translate(-50%,-50%);
+  z-index: 999; 
+transform: translate(-50%,-50%); 
 }
 
 .circularG {
@@ -19,11 +19,11 @@
   -ms-border-radius: 7px;
   -webkit-border-radius: 7px;
   -moz-border-radius: 7px;
-  animation: bounce_circularG;
-  -o-animation: bounce_circularG;
-  -ms-animation: bounce_circularG;
-  -webkit-animation: bounce_circularG;
-  -moz-animation: bounce_circularG;
+  animation-name: bounce_circularG;
+  -o-animation-name: bounce_circularG;
+  -ms-animation-name: bounce_circularG;
+  -webkit-animation-name: bounce_circularG;
+  -moz-animation-name: bounce_circularG;
   animation-duration: 0.428s;
   -o-animation-duration: 0.428s;
   -ms-animation-duration: 0.428s;
@@ -44,131 +44,131 @@
 #circularG_1 {
   left: 0;
   top: 18px;
-  animation-delay: 0.158s;
-  -o-animation-delay: 0.158s;
-  -ms-animation-delay: 0.158s;
-  -webkit-animation-delay: 0.158s;
-  -moz-animation-delay: 0.158s;
+  animation-delay: -0.382s;
+  -o-animation-delay: -0.382s;
+  -ms-animation-delay:  -0.382s;
+  -webkit-animation-delay:  -0.382s;
+  -moz-animation-delay:  -0.382s;
 }
 
 #circularG_2 {
   left: 4px;
   top: 4px;
-  animation-delay: 0.214s;
-  -o-animation-delay: 0.214s;
-  -ms-animation-delay: 0.214s;
-  -webkit-animation-delay: 0.214s;
-  -moz-animation-delay: 0.214s;
+  animation-delay: -0.326s;
+  -o-animation-delay: -0.326s;
+  -ms-animation-delay: -0.326s;
+  -webkit-animation-delay: -0.326s;
+  -moz-animation-delay: -0.326s;
 }
 
 #circularG_3 {
   top: 0;
   left: 18px;
-  animation-delay: 0.27s;
-  -o-animation-delay: 0.27s;
-  -ms-animation-delay: 0.27s;
-  -webkit-animation-delay: 0.27s;
-  -moz-animation-delay: 0.27s;
+  animation-delay: -0.27s;
+  -o-animation-delay: -0.27s;
+  -ms-animation-delay: -0.27s;
+  -webkit-animation-delay: -0.27s;
+  -moz-animation-delay: -0.27s;
 }
 
 #circularG_4 {
   right: 4px;
   top: 4px;
-  animation-delay: 0.326s;
-  -o-animation-delay: 0.326s;
-  -ms-animation-delay: 0.326s;
-  -webkit-animation-delay: 0.326s;
-  -moz-animation-delay: 0.326s;
+  animation-delay: -0.214s;
+  -o-animation-delay: -0.214s;
+  -ms-animation-delay: -0.214s;
+  -webkit-animation-delay: -0.214s;
+  -moz-animation-delay: -0.214s;
 }
 
 #circularG_5 {
   right: 0;
   top: 18px;
-  animation-delay: 0.382s;
-  -o-animation-delay: 0.382s;
-  -ms-animation-delay: 0.382s;
-  -webkit-animation-delay: 0.382s;
-  -moz-animation-delay: 0.382s;
+  animation-delay: -0.158s;
+  -o-animation-delay: -0.158s;
+  -ms-animation-delay: -0.158s;
+  -webkit-animation-delay: -0.158s;
+  -moz-animation-delay: -0.158s;
 }
 
 #circularG_6 {
   right: 4px;
   bottom: 4px;
-  animation-delay: 0.428s;
-  -o-animation-delay: 0.428s;
-  -ms-animation-delay: 0.428s;
-  -webkit-animation-delay: 0.428s;
-  -moz-animation-delay: 0.428s;
+  animation-delay: -0.112s;
+  -o-animation-delay: -0.112s;
+  -ms-animation-delay: -0.112s;
+  -webkit-animation-delay: -0.112s;
+  -moz-animation-delay: -0.112s;
 }
 
 #circularG_7 {
   left: 18px;
   bottom: 0;
-  animation-delay: 0.484s;
-  -o-animation-delay: 0.484s;
-  -ms-animation-delay: 0.484s;
-  -webkit-animation-delay: 0.484s;
-  -moz-animation-delay: 0.484s;
+  animation-delay: -0.056s;
+  -o-animation-delay: -0.056s;
+  -ms-animation-delay: -0.056s;
+  -webkit-animation-delay: -0.056s;
+  -moz-animation-delay: -0.056s;
 }
 
 #circularG_8 {
   left: 4px;
   bottom: 4px;
-  animation-delay: 0.54s;
-  -o-animation-delay: 0.54s;
-  -ms-animation-delay: 0.54s;
-  -webkit-animation-delay: 0.54s;
-  -moz-animation-delay: 0.54s;
+  animation-delay: 0s;
+  -o-animation-delay: 0s;
+  -ms-animation-delay: 0s;
+  -webkit-animation-delay: 0s;
+  -moz-animation-delay: 0s;
 }
 
 
 
 @keyframes bounce_circularG {
-  from {
+  0% {
     transform: scale(1);
   }
 
-  to {
+  100% {
     transform: scale(.3);
   }
 }
 
 @-o-keyframes bounce_circularG {
-  from {
+  0% {
     -o-transform: scale(1);
   }
 
-  to {
+  100% {
     -o-transform: scale(.3);
   }
 }
 
 @-ms-keyframes bounce_circularG {
-  from {
+  0% {
     -ms-transform: scale(1);
   }
 
-  to {
+  100% {
     -ms-transform: scale(.3);
   }
 }
 
 @-webkit-keyframes bounce_circularG {
-  from {
+  0% {
     -webkit-transform: scale(1);
   }
 
-  to {
+  100% {
     -webkit-transform: scale(.3);
   }
 }
 
 @-moz-keyframes bounce_circularG {
-  from {
+  0% {
     -moz-transform: scale(1);
   }
 
-  to {
+  100% {
     -moz-transform: scale(.3);
   }
 }

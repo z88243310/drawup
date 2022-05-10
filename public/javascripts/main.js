@@ -9,7 +9,7 @@ navbar.addEventListener('click', function onNavbarClicked(e) {
 
   if (target.matches('.navbar-brand i') || target.matches('.navbar-brand span')
   ) {
-    circularG.style.display = 'block'
+      circularG.style.display = 'block'
   }
 })
 
@@ -20,6 +20,9 @@ collapse.addEventListener('click', function onListClicked(e) {
 
   if (target.matches('.nav-link') || target.matches('.nav-link .btn-logout') ||
     target.matches('.nav-link .btn-login')) {
-    circularG.style.display = 'block'
+    setTimeout(() => {
+      circularG.style.display = 'block'
+
+    }, 1000)
   }
 })

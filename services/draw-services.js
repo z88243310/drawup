@@ -25,8 +25,8 @@ const drawServices = {
     // API url
     const mediaAPI = `
       ${apiURL}${mediaId}?fields=owner,like_count,comments_count,caption,media_type,media_url,thumbnail_url,timestamp,permalink&access_token=${accessToken}`
-    const commentAPI = `
-      ${apiURL}${mediaId}?fields=comments{text,timestamp,username,user}&access_token=${accessToken}`
+    let commentAPI = `
+      ${apiURL}${mediaId}/comments?fields=text,timestamp,username,user&access_token=${accessToken}&limit=50&format=json&pretty=0`
 
     // request api and delete comments from db 
     const [mediaResponse, commentResponse] = await Promise.all([
@@ -35,7 +35,16 @@ const drawServices = {
 
     // get data from response
     const media = mediaResponse?.data
-    const comments = commentResponse?.data?.comments?.data
+    let comments = commentResponse?.data?.data
+    let commentPagingNext = commentResponse?.data?.paging?.next
+
+    // get all comment data if next page exits
+    while (commentPagingNext) {
+      const commentResponse = await axios.get(commentPagingNext)
+
+      comments.push(...(commentResponse?.data?.data))
+      commentPagingNext = commentResponse?.data?.paging?.next
+    }
 
     // 確認類型，回傳正確圖片 url
     const mediaUrl = media.media_url

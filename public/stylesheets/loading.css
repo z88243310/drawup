@@ -19,11 +19,11 @@
   -ms-border-radius: 7px;
   -webkit-border-radius: 7px;
   -moz-border-radius: 7px;
-  animation-name: bounce_circularG;
-  -o-animation-name: bounce_circularG;
-  -ms-animation-name: bounce_circularG;
-  -webkit-animation-name: bounce_circularG;
-  -moz-animation-name: bounce_circularG;
+  animation: bounce_circularG;
+  -o-animation: bounce_circularG;
+  -ms-animation: bounce_circularG;
+  -webkit-animation: bounce_circularG;
+  -moz-animation: bounce_circularG;
   animation-duration: 0.428s;
   -o-animation-duration: 0.428s;
   -ms-animation-duration: 0.428s;
@@ -124,51 +124,51 @@
 
 
 @keyframes bounce_circularG {
-  0% {
+  from {
     transform: scale(1);
   }
 
-  100% {
+  to {
     transform: scale(.3);
   }
 }
 
 @-o-keyframes bounce_circularG {
-  0% {
+  from {
     -o-transform: scale(1);
   }
 
-  100% {
+  to {
     -o-transform: scale(.3);
   }
 }
 
 @-ms-keyframes bounce_circularG {
-  0% {
+  from {
     -ms-transform: scale(1);
   }
 
-  100% {
+  to {
     -ms-transform: scale(.3);
   }
 }
 
 @-webkit-keyframes bounce_circularG {
-  0% {
+  from {
     -webkit-transform: scale(1);
   }
 
-  100% {
+  to {
     -webkit-transform: scale(.3);
   }
 }
 
 @-moz-keyframes bounce_circularG {
-  0% {
+  from {
     -moz-transform: scale(1);
   }
 
-  100% {
+  to {
     -moz-transform: scale(.3);
   }
 }

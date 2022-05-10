@@ -11,6 +11,14 @@ const postIcon = document.querySelector('.to-post-page')
 // 刷新按鈕
 const reloadIcon = document.querySelector('.reload-page')
 
+// loading
+const circularG = document.querySelector('#circularG')
+
+// 抽獎 & 貼文 & 授權 大型按鈕
+const btnDraw = document?.querySelector('.btn-draw')
+const btnPost = document?.querySelector('.btn-post')
+const btnAuth = document?.querySelector('.btn-auth')
+
 // award draggable and sortable
 const sortable = Sortable.create(awardContainer, {
   handle: '.tag-move',
@@ -85,6 +93,9 @@ deleteBtns.forEach(deleteBtn => {
 postIcon.addEventListener('click', function onPostIconClicked(event) {
   const target = event.target
   const form = target.closest('form')
+
+  circularG.style.display = 'block'
+
   form.submit()
 })
 
@@ -92,7 +103,41 @@ postIcon.addEventListener('click', function onPostIconClicked(event) {
 reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
   const target = event.target
   const form = target.closest('form')
+
   form.action = '/draw?_method=put'
   form.method = 'post'
+  circularG.style.display = 'block'
+
+  form.submit()
+})
+
+// 準備抽獎大按鈕
+btnDraw?.addEventListener('click', function onDrawBtnClicked(event) {
+  const target = event.target
+  const form = target.closest('form')
+
+  if (confirm('進入抽獎頁面')) {
+    console.log('hi')
+    circularG.style.display = 'block'
+    form.submit()
+  }
+  return
+})
+
+// 選擇貼文大按鈕
+btnPost?.addEventListener('click', function onPostBtnClicked(event) {
+  const target = event.target
+  const form = target.closest('form')
+
+  circularG.style.display = 'block'
+  form.submit()
+})
+
+// 選擇貼文大按鈕
+btnAuth?.addEventListener('click', function onAuthBtbClicked(event) {
+  const target = event.target
+  const form = target.closest('form')
+
+  circularG.style.display = 'block'
   form.submit()
 })

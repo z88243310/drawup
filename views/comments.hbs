@@ -82,13 +82,12 @@
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
   {{#if media.id}}
-    <button type="submit" class="btn-draw btn mt-4 mb-5 mx-auto"
-      onclick="return confirm(`進入抽獎頁面`)">準備抽獎</button>
+    <button type="button" class="btn-draw btn mt-4 mb-5 mx-auto">準備抽獎</button>
   {{else}}
-    <button type="button" onclick="submit()" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
+    <button type="button" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
   {{/if}}
 {{else}}
-  <button type="button" onclick="submit()" class="btn-auth btn mt-4 mb-5 mx-auto">請先授權 <i
+  <button type="button" class="btn-auth btn mt-4 mb-5 mx-auto">請先授權 <i
       class="fab fa-facebook-square"></i>
     facebook</button>
 {{/if}}

@@ -12,6 +12,14 @@ const awardData = luckyData.reduce((data, lucky) => {
   return data
 }, [])
 
+// 打亂 luckyData
+for (let k = 0; k < 1000; k++) {
+  for (let i = luckyData.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [luckyData[i], luckyData[j]] = [luckyData[j], luckyData[i]];
+  }
+}
+
 // 點擊後將資料放入清單
 let count = 0
 btnDraw.addEventListener('click', () => {

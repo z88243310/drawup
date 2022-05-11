@@ -111,19 +111,6 @@ reloadIcon.addEventListener('click', function onReloadIconClicked(event) {
   form.submit()
 })
 
-// 準備抽獎大按鈕
-btnDraw?.addEventListener('click', function onDrawBtnClicked(event) {
-  const target = event.target
-  const form = target.closest('form')
-
-  if (confirm('進入抽獎頁面')) {
-    console.log('hi')
-    circularG.style.display = 'block'
-    form.submit()
-  }
-  return
-})
-
 // 選擇貼文大按鈕
 btnPost?.addEventListener('click', function onPostBtnClicked(event) {
   const target = event.target
@@ -141,3 +128,8 @@ btnAuth?.addEventListener('click', function onAuthBtbClicked(event) {
   circularG.style.display = 'block'
   form.submit()
 })
+
+// 準備抽獎大按鈕
+function onDrawBtnClicked() {
+  circularG.style.display = 'block'
+}

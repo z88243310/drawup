@@ -15,7 +15,7 @@
 <!-- 有認證且有留言，即可抽籤 -->
 {{#if isAuthenticated}}
   {{#if media.id}}
-    <form action="/draw/action" method="post">
+    <form action="/draw/action" method="post" onsubmit="onDrawBtnClicked()">
       <fieldset>
         <input type="hidden" name="mediaEncryptId" value="{{media.id}}">
   {{else}}
@@ -69,8 +69,8 @@
         <th class="tag-move" scope="row">{{increment @index}}</th>
         <td><input type="text" class="award-name" name="awardNames[]" value="{{this.name}}"
             required></td>
-        <td><input type="number" class="award-amount" min="1" max="100" name="awardAmounts[]"
-            value="{{this.amount}}" required>
+        <td><input type="number" class="award-amount" min="1" name="awardAmounts[]"
+            value="{{this.amount}}">
         </td>
         <td style="text-align:center"><i class="delete-btn fas fa-times"></i></td>
       </tr>
@@ -82,7 +82,8 @@
 <!-- 按鈕切換 -->
 {{#if isAuthenticated}}
   {{#if media.id}}
-    <button type="button" class="btn-draw btn mt-4 mb-5 mx-auto">準備抽獎</button>
+    <button type="submit" class="btn-draw btn mt-4 mb-5 mx-auto"
+      onclick="return confirm(`進入抽獎頁面`);">準備抽獎</button>
   {{else}}
     <button type="button" class="btn-post btn mt-4 mb-5 mx-auto">選擇貼文</button>
   {{/if}}

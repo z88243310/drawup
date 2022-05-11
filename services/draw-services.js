@@ -1,5 +1,9 @@
 const axios = require('axios')
 
+const dayjs = require('dayjs')
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+dayjs.extend(isSameOrBefore)
+
 const { getUser } = require('../helpers/auth-helpers')
 const { Media, Comment, Condition, Award, Account, User } = require('../models')
 
@@ -234,12 +238,13 @@ const drawServices = {
       awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
     let awardCount = 0
+    const repeatList = {}
 
     if (mediaId !== lastMediaId) throw new Error('貼文選擇錯誤！')
-
+    console.log(deadline)
     // 檢查設定格式
     const numberRegExp = /[\d]+/
-    const dateRegExp = /\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/
+    const dateRegExp = /\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5])([0-9])$/
 
     if (!repeatAmount.match(numberRegExp) || Number(repeatAmount) < 1 || Number(repeatAmount) > 20) {
       throw new Error('重複留言個數應為 1 - 20')
@@ -248,11 +253,10 @@ const drawServices = {
       throw new Error('標記人數應為 0 - 10')
     }
     if (!deadline.match(dateRegExp)) {
-      throw new Error('日期格式為YYYY-MM-DD')
+      throw new Error('日期格式不正確')
     }
 
     // 檢查獎項格式
-
     if (awardNames.length < 1 || awardAmounts.length < 1) {
       throw new Error('至少設定一個獎項！')
     }
@@ -268,9 +272,28 @@ const drawServices = {
     })
 
     // 取出抽獎名單
-    const comments = await Comment.findAll({
-      where: { mediaId },
-      raw: true
+    let comments = await Comment.findAll({ where: { mediaId }, raw: true })
+
+    // 過濾條件：重複個數、標記、日期
+    comments = comments.filter(comment => {
+      const deadlineNew = dayjs(deadline).format('YYYY-MM-DD HH:mm')
+      const timestampNew = dayjs(comment.timestamp).format('YYYY-MM-DD HH:mm')
+      const commentTagAmount = comment.tagAmount
+      const commentUsername = comment.username
+
+      if (dayjs(timestampNew).isSameOrBefore(deadlineNew) &&
+        commentTagAmount >= tagAmount && (
+          repeatList[commentUsername] < repeatAmount ||
+          repeatList[commentUsername] === undefined
+        )
+      ) {
+        // record repeatList
+        if (repeatList[commentUsername] === undefined) {
+          repeatList[commentUsername] = 1
+        }
+        else repeatList[commentUsername]++
+        return true
+      }
     })
 
     if (comments.length < awardCount) throw new Error('獎項不能多於抽獎人數')
@@ -291,6 +314,7 @@ const drawServices = {
 
       // 中講從名單去除
     }
+    // 所有參加名單 > 多少抽獎機會
 
     // 回傳得獎者名單
     return {}

@@ -36,10 +36,10 @@ module.exports = {
   // 取得當年年份作為 currentYear 的屬性值，並導出
   adjustDate: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
   relativeTime: date => dayjs(date).fromNow(true),
-  formatDate: date => dayjs(date).format('YYYY-MM-DD'),
+  formatDate: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
   now: () => {
     const now = new Date()
-    return dayjs(now).format('YYYY-MM-DD')
+    return dayjs(now).format('YYYY-MM-DD HH:mm')
   },
   // 位移 index +1
   increment: value => parseInt(value) + 1,

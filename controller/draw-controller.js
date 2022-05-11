@@ -42,6 +42,7 @@ const drawController = {
   postCondition: async (req, res, next) => {
     try {
       await drawServices.setConditionAndAward(req)
+      await drawServices.drawAction(req)
 
       res.redirect('/draw/action')
 
@@ -62,7 +63,18 @@ const drawController = {
     } catch (e) {
       next(e)
     }
+  },
+  // prepare to draw
+  showDrawResult: async (req, res, next) => {
+    try {
+
+      res.render('action')
+
+    } catch (e) {
+      next(e)
+    }
   }
+
 }
 
 module.exports = drawController

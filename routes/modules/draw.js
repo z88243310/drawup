@@ -15,6 +15,7 @@ router.get('/post', authenticated, drawController.getMedia)
 router.post('/action', authenticated, drawController.postCondition)
 // put media
 router.put('/', authenticated, drawController.putMedia)
-
+// 
+router.get('/action', authenticated, drawController.showDrawResult)
 
 module.exports = router

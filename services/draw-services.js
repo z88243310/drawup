@@ -60,7 +60,7 @@ const drawServices = {
 
     // 確認媒體歸屬是否為該使用者
     const accountMatched = accounts.some(account => account.id === ownerId)
-    if (!accountMatched) throw new Error('貼文取得失敗')
+    if (!accountMatched) throw new Error('貼文取得失敗！')
 
     await Promise.all([
       // 寫入 lastMediaId to User
@@ -97,7 +97,8 @@ const drawServices = {
   },
   setConditionAndAward: async (req) => {
     // get parameter
-    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames, awardAmounts } = req.body
+    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames,
+      awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
 
     // 搜尋或新增一筆 Condition
@@ -215,7 +216,7 @@ const drawServices = {
 
     // 確認媒體歸屬是否為該使用者
     const accountMatched = accounts.some(account => account.id === media.accountId)
-    if (!accountMatched) throw new Error('貼文取得失敗')
+    if (!accountMatched) throw new Error('貼文取得失敗！')
 
     return {
       awards: media.Awards,
@@ -223,6 +224,76 @@ const drawServices = {
       comments: media.Comments,
       media
     }
+  },
+  // draw action
+  drawAction: async (req) => {
+    const user = getUser(req)
+    const lastMediaId = user?.lastMediaId
+
+    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames,
+      awardAmounts } = req.body
+    const mediaId = cryptr.decrypt(mediaEncryptId)
+    let awardCount = 0
+
+    if (mediaId !== lastMediaId) throw new Error('貼文選擇錯誤！')
+
+    // 檢查設定格式
+    const numberRegExp = /[\d]+/
+    const dateRegExp = /\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/
+
+    if (!repeatAmount.match(numberRegExp) || Number(repeatAmount) < 1 || Number(repeatAmount) > 20) {
+      throw new Error('重複留言個數應為 1 - 20')
+    }
+    if (!tagAmount.match(numberRegExp) || Number(tagAmount) < 0 || Number(tagAmount) > 10) {
+      throw new Error('標記人數應為 0 - 10')
+    }
+    if (!deadline.match(dateRegExp)) {
+      throw new Error('日期格式為YYYY-MM-DD')
+    }
+
+    // 檢查獎項格式
+
+    if (awardNames.length < 1 || awardAmounts.length < 1) {
+      throw new Error('至少設定一個獎項！')
+    }
+    awardNames.forEach((awardName, index) => {
+      const awardAmount = awardAmounts[index]
+
+      if (!awardName?.trim()) throw new Error('獎項不能空白！')
+      if (!awardAmount.match(numberRegExp) || Number(awardAmount) < 1) {
+        throw new Error('獎項名額至少1人！')
+      }
+
+      awardCount += Number(awardAmount)
+    })
+
+    // 取出抽獎名單
+    const comments = await Comment.findAll({
+      where: { mediaId },
+      raw: true
+    })
+
+    if (comments.length < awardCount) throw new Error('獎項不能多於抽獎人數')
+
+    // 名單洗牌
+    for (let k = 0; k < 1000; k++) {
+      for (let i = comments.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [comments[i], comments[j]] = [comments[j], comments[i]];
+      }
+    }
+
+    // 抽出獎項
+    for (let i = 0; i < awardCount; i++) {
+
+      const username = comments[i].username
+      console.log(username)
+
+      // 中講從名單去除
+    }
+
+    // 回傳得獎者名單
+    return {}
   }
 }
 

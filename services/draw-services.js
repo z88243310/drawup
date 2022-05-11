@@ -238,10 +238,10 @@ const drawServices = {
       awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
     let awardCount = 0
-    const repeatList = {}
+    const repeatObj = {}
 
     if (mediaId !== lastMediaId) throw new Error('貼文選擇錯誤！')
-    console.log(deadline)
+
     // 檢查設定格式
     const numberRegExp = /[\d]+/
     const dateRegExp = /\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5])([0-9])$/
@@ -283,20 +283,23 @@ const drawServices = {
 
       if (dayjs(timestampNew).isSameOrBefore(deadlineNew) &&
         commentTagAmount >= tagAmount && (
-          repeatList[commentUsername] < repeatAmount ||
-          repeatList[commentUsername] === undefined
+          repeatObj[commentUsername] < repeatAmount ||
+          repeatObj[commentUsername] === undefined
         )
       ) {
-        // record repeatList
-        if (repeatList[commentUsername] === undefined) {
-          repeatList[commentUsername] = 1
+        // record repeatObj
+        if (repeatObj[commentUsername] === undefined) {
+          repeatObj.length = repeatObj.length ? repeatObj.length + 1 : 1
+          repeatObj[commentUsername] = 1
         }
-        else repeatList[commentUsername]++
+        else repeatObj[commentUsername]++
         return true
       }
     })
 
-    if (comments.length < awardCount) throw new Error('獎項不能多於抽獎人數')
+    // 確認獎項數量是否過多
+    if (repeatObj.length < awardCount) throw new Error('獎項不能多於抽獎人數')
+    delete repeatObj.length
 
     // 名單洗牌
     for (let k = 0; k < 1000; k++) {
@@ -306,18 +309,35 @@ const drawServices = {
       }
     }
 
-    // 抽出獎項
-    for (let i = 0; i < awardCount; i++) {
+    // 過濾掉重複中獎
+    const luckySet = new Set()
+    for (let i = 0; i < comments.length; i++) {
+      const commentUsername = comments[i].username
 
-      const username = comments[i].username
-      console.log(username)
-
-      // 中講從名單去除
+      if (!luckySet.has(commentUsername)) luckySet.add(commentUsername)
+      if (luckySet.size === awardCount) break;
     }
-    // 所有參加名單 > 多少抽獎機會
+
+    // 平整獎項 
+    const awardList = []
+    for (let i = 0; i < awardNames.length; i++) {
+      for (let j = 0; j < awardAmounts[i]; j++) {
+        awardList.push(awardNames[i])
+      }
+    }
+
+    // 放入獎項，回傳中獎清單
+    const luckyList = Array.from(luckySet).map((lucky, index) => {
+      return { name: lucky, award: awardList[index] }
+    })
+
+    // 回傳參加者清單
+    const repeatList = Object.entries(repeatObj).map(repeat => {
+      return { name: repeat[0], repeatAmount: repeat[1] }
+    })
 
     // 回傳得獎者名單
-    return {}
+    return { luckyList, repeatList }
   }
 }
 

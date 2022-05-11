@@ -1,0 +1,9 @@
+thead,
+tbody {
+  color: #032f38;
+}
+
+/* 大標題字體 */
+legend {
+  font-weight: 600;
+}

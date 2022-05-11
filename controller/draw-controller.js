@@ -42,9 +42,13 @@ const drawController = {
   postCondition: async (req, res, next) => {
     try {
       await drawServices.setConditionAndAward(req)
-      await drawServices.drawAction(req)
+      const { awardNames, luckyList, repeatList } = await drawServices.drawAction(req)
 
-      res.redirect('/draw/action')
+      res.render('action', {
+        repeatList, awardNames,
+        luckyData: JSON.stringify(luckyList),
+        repeatData: JSON.stringify(repeatList)
+      })
 
     } catch (e) {
       next(e)

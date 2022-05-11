@@ -6,20 +6,10 @@
   border-radius: 30px;
 }
 
-/* 大標題字體 */
-legend {
-  font-weight: 600;
-}
-
 /* 留言相關 */
 .comment-count {
   width: 60%;
   font-weight: 900;
-}
-
-thead,
-tbody {
-  color: #032f38;
 }
 
 /* 刷新留言 */

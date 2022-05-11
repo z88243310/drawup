@@ -1,0 +1,47 @@
+.btn-draw {
+  background-color: #16a5ad;
+    border: 1px solid #16a5ad;
+  color: white;
+}
+
+.btn-draw:hover {
+  background-color: #0d7281;
+    border: 1px solid #0d7281;
+  color: white;
+}
+
+.btn-draw {
+  width: 60%;
+  display: block;
+  max-width: 350px;
+  font-weight: 600;
+}
+
+/* 抽獎動態顯示區塊 */
+
+#draw-name,#draw-award {
+  border: 1px solid red;
+  width:50%;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+  font-size: 32px;
+}
+
+.draw-bar {
+  min-height: 100px;
+}
+
+@media screen and (max-device-width:800px) {
+  #draw-name,#draw-award{
+    width: 100%;
+  }
+}
+
+.award-div {
+  margin-left: 100px;
+}
+.award-div div {
+
+  width: 50%;
+}

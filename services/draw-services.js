@@ -331,13 +331,13 @@ const drawServices = {
       return { name: lucky, award: awardList[index] }
     })
 
-    // 回傳參加者清單
+    // 參加者清單
     const repeatList = Object.entries(repeatObj).map(repeat => {
       return { name: repeat[0], repeatAmount: repeat[1] }
     })
 
     // 回傳得獎者名單
-    return { luckyList, repeatList }
+    return { luckyList, repeatList, awardNames }
   }
 }
 

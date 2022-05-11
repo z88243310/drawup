@@ -41,7 +41,13 @@ btnDraw.addEventListener('click', () => {
         </td>
     `
       awardBodies[index].appendChild(tr)
+
+      // next , and remove self
       count++
+      repeatData = repeatData.reduce((data, repeat) => {
+        if (repeat.name !== name) data.push(repeat)
+        return data
+      }, [])
     }
   })
 })

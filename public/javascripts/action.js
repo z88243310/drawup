@@ -21,6 +21,7 @@ for (let k = 0; k < 1000; k++) {
   }
 }
 
+// 抽獎循環動畫
 const setIntervalX = (fn, delay, times) => {
   if (!times) {
     drawName.innerText = luckyData[awardIndex].name
@@ -41,7 +42,6 @@ const setIntervalX = (fn, delay, times) => {
 
 // 點擊後將資料放入清單
 btnDraw.addEventListener('click', async () => {
-  if (awardIndex >= luckyData.length) return
 
   const name = luckyData[awardIndex].name
   const award = luckyData[awardIndex].award
@@ -92,6 +92,12 @@ btnDraw.addEventListener('click', async () => {
   const index = awardData.indexOf(award)
   awardData.splice(index, 1)
   repeatData = repeatData.filter(repeat => repeat.name !== name)
+
+  // 關閉抽獎紐
+  if (awardIndex >= luckyData.length) {
+    btnDraw.disabled = true
+    btnDraw.innerText = '抽獎完畢'
+  }
 
   // show button
   btnDraw.style.display = 'block'

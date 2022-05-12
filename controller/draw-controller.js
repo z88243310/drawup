@@ -62,7 +62,7 @@ const drawController = {
         drawServices.refreshMediaAndComment(req),
         drawServices.setConditionAndAward(req)
       ])
-
+      req.flash('success_messages', '更新成功')
       res.redirect('/draw')
 
     } catch (e) {

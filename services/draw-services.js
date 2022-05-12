@@ -337,7 +337,10 @@ const drawServices = {
     })
 
     // 回傳得獎者名單
-    return { luckyList, repeatList, awardNames }
+    return {
+      luckyList, repeatList, awardNames, awardList,
+      drawerList: comments
+    }
   }
 }
 

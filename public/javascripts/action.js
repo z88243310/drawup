@@ -10,9 +10,6 @@ const awardBodies = document.querySelectorAll('.award-body')
 // 紀錄抽獎次序
 let awardIndex = 0
 
-// 獎項資料 
-let awardData = luckyData.map(lucky => lucky.award)
-
 // 打亂 luckyData
 for (let k = 0; k < 1000; k++) {
   for (let i = luckyData.length - 1; i > 0; i--) {
@@ -42,7 +39,7 @@ const setIntervalX = (fn, delay, times) => {
 
 // 點擊後將資料放入清單
 btnDraw.addEventListener('click', async () => {
-
+  console.log(drawerData, awardData)
   const name = luckyData[awardIndex].name
   const award = luckyData[awardIndex].award
   const times = awardData.length > 1 ? 100 : 20
@@ -57,9 +54,9 @@ btnDraw.addEventListener('click', async () => {
 
   // 拉霸動畫，回傳得獎者
   await setIntervalX(() => {
-    const repeatDataRandom = Math.floor(Math.random() * repeatData.length)
+    const drawerDataRandom = Math.floor(Math.random() * drawerData.length)
     const awardDataRandom = Math.floor(Math.random() * awardData.length)
-    drawName.innerText = repeatData[repeatDataRandom].name
+    drawName.innerText = drawerData[drawerDataRandom].username
     drawAward.innerText = awardData[awardDataRandom]
   }, 10, times)
 
@@ -78,20 +75,16 @@ btnDraw.addEventListener('click', async () => {
         </td>
     `
       awardBodies[index].appendChild(tr)
-
-      // next , and remove self
-      awardIndex++
-      repeatData = repeatData.reduce((data, repeat) => {
-        if (repeat.name !== name) data.push(repeat)
-        return data
-      }, [])
     }
   })
+
+  // next , and remove self
+  awardIndex++
 
   // 整理名單
   const index = awardData.indexOf(award)
   awardData.splice(index, 1)
-  repeatData = repeatData.filter(repeat => repeat.name !== name)
+  drawerData = drawerData.filter(drawer => drawer.username !== name)
 
   // 關閉抽獎紐
   if (awardIndex >= luckyData.length) {

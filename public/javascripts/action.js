@@ -39,7 +39,6 @@ const setIntervalX = (fn, delay, times) => {
 
 // 點擊後將資料放入清單
 btnDraw.addEventListener('click', async () => {
-  console.log(drawerData, awardData)
   const name = luckyData[awardIndex].name
   const award = luckyData[awardIndex].award
 

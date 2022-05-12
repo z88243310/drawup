@@ -25,6 +25,7 @@
 
 #draw-name,#draw-award {
   background-color: #0a819610;
+  padding: 0px 10px;
   border-radius: 10px;
   width:48%;
   height: 80px;

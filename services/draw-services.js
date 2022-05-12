@@ -1,5 +1,9 @@
 const axios = require('axios')
 
+const dayjs = require('dayjs')
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+dayjs.extend(isSameOrBefore)
+
 const { getUser } = require('../helpers/auth-helpers')
 const { Media, Comment, Condition, Award, Account, User } = require('../models')
 
@@ -60,7 +64,7 @@ const drawServices = {
 
     // 確認媒體歸屬是否為該使用者
     const accountMatched = accounts.some(account => account.id === ownerId)
-    if (!accountMatched) throw new Error('貼文取得失敗')
+    if (!accountMatched) throw new Error('貼文取得失敗！')
 
     await Promise.all([
       // 寫入 lastMediaId to User
@@ -97,7 +101,8 @@ const drawServices = {
   },
   setConditionAndAward: async (req) => {
     // get parameter
-    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames, awardAmounts } = req.body
+    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames,
+      awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
 
     // 搜尋或新增一筆 Condition
@@ -215,7 +220,7 @@ const drawServices = {
 
     // 確認媒體歸屬是否為該使用者
     const accountMatched = accounts.some(account => account.id === media.accountId)
-    if (!accountMatched) throw new Error('貼文取得失敗')
+    if (!accountMatched) throw new Error('貼文取得失敗！')
 
     return {
       awards: media.Awards,
@@ -223,6 +228,116 @@ const drawServices = {
       comments: media.Comments,
       media
     }
+  },
+  // draw action
+  drawAction: async (req) => {
+    const user = getUser(req)
+    const lastMediaId = user?.lastMediaId
+
+    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames,
+      awardAmounts } = req.body
+    const mediaId = cryptr.decrypt(mediaEncryptId)
+    let awardCount = 0
+    const repeatObj = {}
+
+    if (mediaId !== lastMediaId) throw new Error('貼文選擇錯誤！')
+
+    // 檢查設定格式
+    const numberRegExp = /[\d]+/
+    const dateRegExp = /\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(0[0-9]|1[0-9]|2[0-3]):([0-5])([0-9])$/
+
+    if (!repeatAmount.match(numberRegExp) || Number(repeatAmount) < 1 || Number(repeatAmount) > 20) {
+      throw new Error('重複留言個數應為 1 - 20')
+    }
+    if (!tagAmount.match(numberRegExp) || Number(tagAmount) < 0 || Number(tagAmount) > 10) {
+      throw new Error('標記人數應為 0 - 10')
+    }
+    if (!deadline.match(dateRegExp)) {
+      throw new Error('日期格式不正確')
+    }
+
+    // 檢查獎項格式
+    if (awardNames.length < 1 || awardAmounts.length < 1) {
+      throw new Error('至少設定一個獎項！')
+    }
+    awardNames.forEach((awardName, index) => {
+      const awardAmount = awardAmounts[index]
+
+      if (!awardName?.trim()) throw new Error('獎項不能空白！')
+      if (!awardAmount.match(numberRegExp) || Number(awardAmount) < 1) {
+        throw new Error('獎項名額至少1人！')
+      }
+
+      awardCount += Number(awardAmount)
+    })
+
+    // 取出抽獎名單
+    let comments = await Comment.findAll({ where: { mediaId }, raw: true })
+
+    // 過濾條件：重複個數、標記、日期
+    comments = comments.filter(comment => {
+      const deadlineNew = dayjs(deadline).format('YYYY-MM-DD HH:mm')
+      const timestampNew = dayjs(comment.timestamp).format('YYYY-MM-DD HH:mm')
+      const commentTagAmount = comment.tagAmount
+      const commentUsername = comment.username
+
+      if (dayjs(timestampNew).isSameOrBefore(deadlineNew) &&
+        commentTagAmount >= tagAmount && (
+          repeatObj[commentUsername] < repeatAmount ||
+          repeatObj[commentUsername] === undefined
+        )
+      ) {
+        // record repeatObj
+        if (repeatObj[commentUsername] === undefined) {
+          repeatObj.length = repeatObj.length ? repeatObj.length + 1 : 1
+          repeatObj[commentUsername] = 1
+        }
+        else repeatObj[commentUsername]++
+        return true
+      }
+    })
+
+    // 確認獎項數量是否過多
+    if (repeatObj.length < awardCount) throw new Error('獎項不能多於抽獎人數')
+    delete repeatObj.length
+
+    // 名單洗牌
+    for (let k = 0; k < 1000; k++) {
+      for (let i = comments.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [comments[i], comments[j]] = [comments[j], comments[i]];
+      }
+    }
+
+    // 過濾掉重複中獎
+    const luckySet = new Set()
+    for (let i = 0; i < comments.length; i++) {
+      const commentUsername = comments[i].username
+
+      if (!luckySet.has(commentUsername)) luckySet.add(commentUsername)
+      if (luckySet.size === awardCount) break;
+    }
+
+    // 平整獎項 
+    const awardList = []
+    for (let i = 0; i < awardNames.length; i++) {
+      for (let j = 0; j < awardAmounts[i]; j++) {
+        awardList.push(awardNames[i])
+      }
+    }
+
+    // 放入獎項，回傳中獎清單
+    const luckyList = Array.from(luckySet).map((lucky, index) => {
+      return { name: lucky, award: awardList[index] }
+    })
+
+    // 參加者清單
+    const repeatList = Object.entries(repeatObj).map(repeat => {
+      return { name: repeat[0], repeatAmount: repeat[1] }
+    })
+
+    // 回傳得獎者名單
+    return { luckyList, repeatList, awardNames }
   }
 }
 

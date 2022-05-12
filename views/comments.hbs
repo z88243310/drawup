@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="stylesheets/comments.css">
+<link rel="stylesheet" href="/stylesheets/comments.css">
 <!-- 貼文縮圖 -->
 <div class="show-form position-relative">
   <form action="/draw/post" class="position-absolute post-form text-center">
@@ -47,8 +47,9 @@
 </div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
-  <input type="date" id="deadline" class="form-control" style="cursor:pointer" placeholder="輸入截止時間"
-    name="deadline"
+  <input type="datetime-local" id="deadline" class="form-control"
+    pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" style="cursor:pointer"
+    placeholder="輸入截止時間" name="deadline"
     value="{{#if condition.deadline}}{{formatDate condition.deadline}}{{else}}{{now}}{{/if}}"
     required>
 </div>

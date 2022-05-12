@@ -1,0 +1,50 @@
+<link rel="stylesheet" href="/stylesheets/action.css">
+<div class="draw-bar d-flex justify-content-evenly align-content-around flex-wrap">
+  <div class="mb-2" id="draw-name">z88243310</div>
+  <div class="mb-2" id="draw-award">獎項名稱字數測試</div>
+</div>
+<div class="draw-container mt-4 mb-5">
+  <button type="button" class="btn-draw btn mx-auto">開始抽獎</button>{{> loading}}
+</div>
+<div class="award-container">
+  {{#each awardNames}}
+    <legend class="award-title">{{this}}</legend>
+    <table class=" table align-middle table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" class="col-4">#</th>
+          <th scope="col" class="col-8">名稱</th>
+        </tr>
+      </thead>
+      <tbody class="award-body">
+      </tbody>
+    </table>
+  {{/each}}
+</div>
+<legend class="mt-5">抽獎名單</legend>
+<table class=" table align-middle table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col" class="col-4">#</th>
+      <th scope="col" class="col-5">名稱</th>
+      <th scope="col" class="col-3">留言次數</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each repeatList}}
+      <tr>
+        <th scope="row">{{increment @index}}</th>
+        <td class="text-nowrap text-truncate" style="max-width:200px" data-toggle="tooltip"
+          data-placement="top" title="{{this.name}}">{{this.name}}
+        </td>
+        <td class="text-nowrap text-truncate" style="max-width:100px;" data-toggle="tooltip"
+          data-placement="top" title="{{this.repeatAmount}}">{{this.repeatAmount}} </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<script>
+  let luckyData = {{{ luckyData }}}
+  let repeatData = {{{ repeatData }}}
+</script>
+<script src="/javascripts/action.js"></script>

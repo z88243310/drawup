@@ -3,7 +3,9 @@
   <div class="mb-2" id="draw-name">z88243310</div>
   <div class="mb-2" id="draw-award">獎項名稱字數測試</div>
 </div>
-<button type="button" class="btn-draw btn mt-4 mb-5 mx-auto">開始抽獎</button>
+<div class="draw-container">
+  <button type="button" class="btn-draw btn mt-4 mb-5 mx-auto">開始抽獎</button>{{> loading}}
+</div>
 <div class="award-container">
   {{#each awardNames}}
     <legend class="award-title">{{this}}</legend>
@@ -24,8 +26,8 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col" class="col-4">#</th>
-      <th scope="col" class="col-6">名稱</th>
-      <th scope="col" class="col-2">留言次數</th>
+      <th scope="col" class="col-5">名稱</th>
+      <th scope="col" class="col-3">留言次數</th>
     </tr>
   </thead>
   <tbody>

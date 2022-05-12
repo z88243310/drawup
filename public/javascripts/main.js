@@ -1,4 +1,5 @@
 const navbar = document.querySelector('.navbar')
+const alertWindow = document.querySelector('.alert')
 
 const collapse = document.querySelector('.navbar-collapse')
 
@@ -8,6 +9,14 @@ window.onpageshow = function (event) {
     window.location.reload()
   }
 };
+
+// 自動關閉 alert
+if (alertWindow) {
+  setTimeout(() => {
+    alertWindow.style.display = 'none'
+  },6000)
+}
+
 
 // logo brand
 navbar.addEventListener('click', function onNavbarClicked(e) {

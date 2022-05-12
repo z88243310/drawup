@@ -1,3 +1,7 @@
+.draw-container {
+  height: 40px;
+}
+
 .btn-draw {
   background-color: #16a5ad;
     border: 1px solid #16a5ad;
@@ -20,8 +24,9 @@
 /* 抽獎動態顯示區塊 */
 
 #draw-name,#draw-award {
-  border: 1px solid red;
-  width:50%;
+  background-color: #0a819610;
+  border-radius: 10px;
+  width:48%;
   height: 80px;
   line-height: 80px;
   text-align: center;

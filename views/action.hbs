@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="/stylesheets/action.css">
-<div class="draw-bar border d-flex justify-content-evenly align-content-around flex-wrap">
+<div class="draw-bar d-flex justify-content-evenly align-content-around flex-wrap">
   <div class="mb-2" id="draw-name">z88243310</div>
   <div class="mb-2" id="draw-award">獎項名稱字數測試</div>
 </div>
-<div class="draw-container">
-  <button type="button" class="btn-draw btn mt-4 mb-5 mx-auto">開始抽獎</button>{{> loading}}
+<div class="draw-container mt-4 mb-5">
+  <button type="button" class="btn-draw btn mx-auto">開始抽獎</button>{{> loading}}
 </div>
 <div class="award-container">
   {{#each awardNames}}
@@ -21,7 +21,7 @@
     </table>
   {{/each}}
 </div>
-<legend>抽獎名單</legend>
+<legend class="mt-5">抽獎名單</legend>
 <table class=" table align-middle table-hover">
   <thead class="thead-dark">
     <tr>

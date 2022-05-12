@@ -297,9 +297,10 @@ const drawServices = {
       }
     })
 
-    // 確認獎項數量是否過多
+    // 確認獎項數量是否過多 & 是否有抽獎者
     if (repeatObj.length < awardCount) throw new Error('獎項不能多於抽獎人數')
     delete repeatObj.length
+    if (comments.length <= 0) throw new Error('沒有符合條件的抽獎者')
 
     // 名單洗牌
     for (let k = 0; k < 1000; k++) {

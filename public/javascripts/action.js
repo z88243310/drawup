@@ -43,7 +43,7 @@ btnDraw.addEventListener('click', async () => {
   const name = luckyData[awardIndex].name
   const award = luckyData[awardIndex].award
 
-  // 檢查是否剩一位抽獎者，調整抽獎循環時間
+  // 檢查是否剩一位抽獎者，調整抽獎循環次數
   const drawerCheck = drawerData.some(drawer => drawer.username !== name)
   const times = drawerCheck ? 100 : 20
 

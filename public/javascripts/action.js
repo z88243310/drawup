@@ -42,7 +42,10 @@ btnDraw.addEventListener('click', async () => {
   console.log(drawerData, awardData)
   const name = luckyData[awardIndex].name
   const award = luckyData[awardIndex].award
-  const times = awardData.length > 1 ? 100 : 20
+
+  // 檢查是否剩一位抽獎者，調整抽獎循環時間
+  const drawerCheck = drawerData.some(drawer => drawer.username !== name)
+  const times = drawerCheck ? 100 : 20
 
   // show loading
   btnDraw.style.display = 'none'
@@ -78,7 +81,7 @@ btnDraw.addEventListener('click', async () => {
     }
   })
 
-  // next , and remove self
+  // next
   awardIndex++
 
   // 整理名單

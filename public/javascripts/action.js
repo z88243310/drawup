@@ -10,14 +10,6 @@ const awardBodies = document.querySelectorAll('.award-body')
 // 紀錄抽獎次序
 let awardIndex = 0
 
-// 打亂 luckyData
-for (let k = 0; k < 1000; k++) {
-  for (let i = luckyData.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [luckyData[i], luckyData[j]] = [luckyData[j], luckyData[i]];
-  }
-}
-
 // 抽獎循環動畫
 const setIntervalX = (fn, delay, times) => {
   if (!times) {
@@ -57,7 +49,8 @@ btnDraw.addEventListener('click', async () => {
   // 拉霸動畫，回傳得獎者
   await setIntervalX(() => {
     const drawerDataRandom = Math.floor(Math.random() * drawerData.length)
-    const awardDataRandom = Math.floor(Math.random() * awardData.length)
+    const awardDataRandom = orderSelected === 'rand' ? Math.floor(Math.random() * awardData.length) : 0
+
     drawName.innerText = drawerData[drawerDataRandom].username
     drawAward.innerText = awardData[awardDataRandom]
   }, 10, times)

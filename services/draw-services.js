@@ -101,7 +101,7 @@ const drawServices = {
   },
   setConditionAndAward: async (req) => {
     // get parameter
-    const { repeatAmount, tagAmount, orderSelected, deadline, mediaEncryptId, awardNames,
+    const { repeatAmount, tagAmount, orderSelected, deadline, keyword, mediaEncryptId, awardNames,
       awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
 
@@ -110,14 +110,14 @@ const drawServices = {
       where: { mediaId },
       include: [Media],
       defaults: {
-        repeatAmount, tagAmount, deadline, orderSelected, mediaId
+        repeatAmount, tagAmount, deadline, orderSelected, keyword, mediaId
       }
     })
 
     await Promise.all([
       // 如果有搜尋到則更新 Condition 資料
       !conditionCreated ? conditionNew.update({
-        repeatAmount, tagAmount, deadline, orderSelected, mediaId
+        repeatAmount, tagAmount, deadline, orderSelected, keyword, mediaId
       }) : '',
       // 刪除 award from DB
       Award.destroy({ where: { mediaId } })

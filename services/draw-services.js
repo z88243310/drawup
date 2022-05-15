@@ -101,7 +101,7 @@ const drawServices = {
   },
   setConditionAndAward: async (req) => {
     // get parameter
-    const { repeatAmount, tagAmount, orderSelected, deadline, mediaEncryptId, awardNames,
+    const { repeatAmount, tagAmount, orderSelected, deadline, keyword, mediaEncryptId, awardNames,
       awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
 
@@ -110,14 +110,14 @@ const drawServices = {
       where: { mediaId },
       include: [Media],
       defaults: {
-        repeatAmount, tagAmount, deadline, orderSelected, mediaId
+        repeatAmount, tagAmount, deadline, orderSelected, keyword, mediaId
       }
     })
 
     await Promise.all([
       // 如果有搜尋到則更新 Condition 資料
       !conditionCreated ? conditionNew.update({
-        repeatAmount, tagAmount, deadline, orderSelected, mediaId
+        repeatAmount, tagAmount, deadline, orderSelected, keyword, mediaId
       }) : '',
       // 刪除 award from DB
       Award.destroy({ where: { mediaId } })
@@ -234,7 +234,7 @@ const drawServices = {
     const user = getUser(req)
     const lastMediaId = user?.lastMediaId
 
-    const { repeatAmount, tagAmount, deadline, orderSelected,
+    const { repeatAmount, tagAmount, deadline, keyword, orderSelected,
       mediaEncryptId, awardNames, awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
     let awardCount = 0
@@ -274,7 +274,7 @@ const drawServices = {
     // 取出抽獎名單
     let comments = await Comment.findAll({ where: { mediaId }, raw: true })
 
-    // 過濾條件：重複個數、標記、日期
+    // 過濾條件：重複個數、標記、日期、關鍵字
     comments = comments.filter(comment => {
       const deadlineNew = dayjs(deadline).format('YYYY-MM-DD HH:mm')
       const timestampNew = dayjs(comment.timestamp).format('YYYY-MM-DD HH:mm')
@@ -285,7 +285,7 @@ const drawServices = {
         commentTagAmount >= tagAmount && (
           repeatObj[commentUsername] < repeatAmount ||
           repeatObj[commentUsername] === undefined
-        )
+        ) && comment.text.includes(keyword)
       ) {
         // record repeatObj
         if (repeatObj[commentUsername] === undefined) {

@@ -234,7 +234,7 @@ const drawServices = {
     const user = getUser(req)
     const lastMediaId = user?.lastMediaId
 
-    const { repeatAmount, tagAmount, deadline, orderSelected,
+    const { repeatAmount, tagAmount, deadline, keyword, orderSelected,
       mediaEncryptId, awardNames, awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
     let awardCount = 0
@@ -274,7 +274,7 @@ const drawServices = {
     // 取出抽獎名單
     let comments = await Comment.findAll({ where: { mediaId }, raw: true })
 
-    // 過濾條件：重複個數、標記、日期
+    // 過濾條件：重複個數、標記、日期、關鍵字
     comments = comments.filter(comment => {
       const deadlineNew = dayjs(deadline).format('YYYY-MM-DD HH:mm')
       const timestampNew = dayjs(comment.timestamp).format('YYYY-MM-DD HH:mm')
@@ -285,7 +285,7 @@ const drawServices = {
         commentTagAmount >= tagAmount && (
           repeatObj[commentUsername] < repeatAmount ||
           repeatObj[commentUsername] === undefined
-        )
+        ) && comment.text.includes(keyword)
       ) {
         // record repeatObj
         if (repeatObj[commentUsername] === undefined) {

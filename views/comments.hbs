@@ -48,9 +48,13 @@
 <div class="mb-3 position-relative">
   <label for="orderSelected" class="form-label">開獎順序</label>
   <select name="orderSelected" id="orderSelected" class="form-select shadow-sm d-block">
-    <option value="asc">1 → 2 → 3</option>
-    <option value="desc">3 → 2 → 1</option>
-    <option value="rand">隨機</option>
+    <option value="asc" {{#ifCond 'asc' condition.orderSelected}}selected{{/ifCond}}>1 → 2 →
+      3
+    </option>
+    <option value="desc" {{#ifCond 'desc' condition.orderSelected}}selected{{/ifCond}}>3 → 2
+      → 1</option>
+    <option value="rand" {{#ifCond 'rand' condition.orderSelected}}selected{{/ifCond}}>隨機
+    </option>
   </select>
 </div>
 <div class="mb-3">

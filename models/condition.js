@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     repeatAmount: DataTypes.INTEGER,
     tagAmount: DataTypes.INTEGER,
     deadline: DataTypes.DATE,
+    orderSelected: DataTypes.STRING,
     mediaId: DataTypes.STRING
   }, {
     sequelize,

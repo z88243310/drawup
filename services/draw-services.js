@@ -101,7 +101,7 @@ const drawServices = {
   },
   setConditionAndAward: async (req) => {
     // get parameter
-    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames,
+    const { repeatAmount, tagAmount, orderSelected, deadline, mediaEncryptId, awardNames,
       awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
 
@@ -110,14 +110,14 @@ const drawServices = {
       where: { mediaId },
       include: [Media],
       defaults: {
-        repeatAmount, tagAmount, deadline, mediaId
+        repeatAmount, tagAmount, deadline, orderSelected, mediaId
       }
     })
 
     await Promise.all([
       // 如果有搜尋到則更新 Condition 資料
       !conditionCreated ? conditionNew.update({
-        repeatAmount, tagAmount, deadline, mediaId
+        repeatAmount, tagAmount, deadline, orderSelected, mediaId
       }) : '',
       // 刪除 award from DB
       Award.destroy({ where: { mediaId } })
@@ -234,8 +234,8 @@ const drawServices = {
     const user = getUser(req)
     const lastMediaId = user?.lastMediaId
 
-    const { repeatAmount, tagAmount, deadline, mediaEncryptId, awardNames,
-      awardAmounts } = req.body
+    const { repeatAmount, tagAmount, deadline, orderSelected,
+      mediaEncryptId, awardNames, awardAmounts } = req.body
     const mediaId = cryptr.decrypt(mediaEncryptId)
     let awardCount = 0
     const repeatObj = {}
@@ -332,6 +332,23 @@ const drawServices = {
       return { name: lucky, award: awardList[index] }
     })
 
+    // 調整開獎排序 luckyList,awardList
+    if (orderSelected === 'rand') {
+      for (let k = 0; k < 1000; k++) {
+        for (let i = luckyList.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [luckyList[i], luckyList[j]] = [luckyList[j], luckyList[i]];
+          [awardList[i], awardList[j]] = [awardList[j], awardList[i]];
+        }
+      }
+    }
+    else if (orderSelected === 'desc') {
+      for (let i = 0; i < luckyList.length / 2; i++) {
+        [luckyList[i], luckyList[luckyList.length - 1 - i]] = [luckyList[luckyList.length - 1 - i], luckyList[i]];
+        [awardList[i], awardList[luckyList.length - 1 - i]] = [awardList[luckyList.length - 1 - i], awardList[i]];
+      }
+    }
+
     // 參加者清單
     const repeatList = Object.entries(repeatObj).map(repeat => {
       return { name: repeat[0], repeatAmount: repeat[1] }
@@ -340,7 +357,8 @@ const drawServices = {
     // 回傳得獎者名單
     return {
       luckyList, repeatList, awardNames, awardList,
-      drawerList: comments
+      drawerList: comments,
+      orderSelected
     }
   }
 }

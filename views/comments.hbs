@@ -45,6 +45,18 @@
     value="{{#if condition.tagAmount}}{{condition.tagAmount}}{{else}}0{{/if}}" min="0" max="10"
     required>
 </div>
+<div class="mb-3 position-relative">
+  <label for="orderSelected" class="form-label">開獎順序</label>
+  <select name="orderSelected" id="orderSelected" class="form-select shadow-sm d-block">
+    <option value="asc" {{#ifCond 'asc' condition.orderSelected}}selected{{/ifCond}}>1 → 2 →
+      3
+    </option>
+    <option value="desc" {{#ifCond 'desc' condition.orderSelected}}selected{{/ifCond}}>3 → 2
+      → 1</option>
+    <option value="rand" {{#ifCond 'rand' condition.orderSelected}}selected{{/ifCond}}>隨機
+    </option>
+  </select>
+</div>
 <div class="mb-3">
   <label for="deadline" class="form-label">截止時間</label>
   <input type="datetime-local" id="deadline" class="form-control"

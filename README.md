@@ -14,28 +14,30 @@ IG抽起來，是一個 Instagram 留言抽獎的網頁工具，透過 Facebook 
 
 大螢幕與小螢幕首頁顯示
 
-<p float="left"><img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/home-pc.png" width="49%">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/home-phone.png" width="49%"></p>
+<p float="left">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/total-full-screen-flow.gif" width="400">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/total-mobile-flow.gif" width="400">
+</p>
 
 授權與選取貼文
 
 <p float="left">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/login-flow.gif" width="49%">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/register-flow.gif" width="49%">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/auth-flow.gif" width="400">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/select-post-flow.gif" width="400">
 </p>
 
 條件設定與獎項設定
 
 <p float="left">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/new-flow.gif" width="49%">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/edit-flow.gif" width="49%">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/condition-flow.gif" width="400">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/award-flow.gif" width="400">
 </p>
 
-抽獎頁面
+刷新留言與抽獎流程
 
 <p float="left">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/delete-flow.gif" width="49%">
-<img src="https://github.com/z88243310/expense_tracker/blob/master/public/img/keyword-flow.gif" width="49%">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/comment-flow.gif" width="400">
+<img src="https://github.com/z88243310/drawup/blob/master/public/img/draw-flow.gif" width="400">
 </p>
 
 </br>
@@ -180,6 +182,7 @@ FACEBOOK_CALLBACK="https 本地外網網址/auth/facebook/callback"
 ```
 
 3.使用 Git Bash 在本專案路徑下，輸入以下指令來`建立資料庫`
+
 ```text
 npx sequelize db:create
 ```
@@ -212,4 +215,4 @@ npm run start
 
 </br>
 
-更新時間 : 2022.05.18
+更新時間 : 2022.05.20
